@@ -1,0 +1,30 @@
+{% extends "base/base.html" %} {% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0">Atualização de Veículo</h3>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %} {{ form.as_p }}
+
+            <div class="text-center mt-4">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-arrow-repeat mr-1"></i> Atualizar
+              </button>
+              <a
+                href="{% url 'list_vehicles' %}"
+                class="btn btn-secondary ml-2"
+              >
+                <i class="bi bi-x-circle mr-1"></i> Cancelar
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

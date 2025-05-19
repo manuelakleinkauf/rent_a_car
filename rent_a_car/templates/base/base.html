@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}Rent a Car{% endblock %}</title>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"
+      rel="stylesheet"
+    />
+
+    <style>
+      .sidebar {
+        height: 100vh;
+        width: 250px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        background-color: #f8f9fa;
+        border-right: 1px solid #dee2e6;
+        padding-top: 1rem;
+      }
+
+      .content {
+        margin-left: 250px;
+        padding: 20px;
+      }
+
+      .sidebar .nav-link.active {
+        background-color: #e9ecef;
+        border-radius: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="sidebar d-flex flex-column p-3">
+      <a href="#" class="d-flex align-items-center mb-3 text-decoration-none">
+        <i class="bi bi-steering-wheel fs-2 me-2"></i>
+        <span class="fs-4">Rent a Car</span>
+      </a>
+      <hr />
+      <ul class="nav nav-pills flex-column mb-auto">
+        <li>
+          <a href="{% url 'list_vehicles' %}" class="nav-link">
+            <i class="bi bi-car-front-fill"></i> Veículos
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link">
+            <i class="bi bi-people-fill"></i> Clientes
+          </a>
+        </li>
+        <li>
+          <a href="#" class="nav-link">
+            <i class="bi bi-person-badge-fill"></i> Funcionários
+          </a>
+        </li>
+      </ul>
+      <hr />
+      <div class="mt-auto">
+        <a href="#" class="nav-link text-muted">
+          <i class="bi bi-gear-fill"></i> Configurações
+        </a>
+      </div>
+    </div>
+
+    <main class="p-4 w-100">{% block content %}{% endblock %}</main>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
