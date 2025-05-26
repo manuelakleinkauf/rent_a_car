@@ -20,6 +20,14 @@ STATUS_CHOICES = (
     ('rented', 'Alugado'),
 )
 
+class VehicleClass(models.Model):
+    name = models.CharField(max_length=50)
+    description = models.TextField(blank=True, null=True)
+    daily_price = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
 class Vehicle(models.Model):
     vehicle_type = models.CharField(max_length=10, choices=VEHICLE_TYPE_CHOICES)
     brand = models.CharField(max_length=20, choices=VEHICLE_BRAND_CHOICES)
@@ -27,10 +35,10 @@ class Vehicle(models.Model):
     year = models.IntegerField()
     color = models.CharField(max_length=20)
     km = models.IntegerField()
-    price_per_day = models.DecimalField(max_digits=10, decimal_places=2)
     status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='available')
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-
+    plate = models.CharField(max_length=10, unique=True, default='')
+    vehicle_class = models.ForeignKey(VehicleClass, on_delete=models.PROTECT)
     def __str__(self):
         return f"{self.brand} {self.model} ({self.year})"

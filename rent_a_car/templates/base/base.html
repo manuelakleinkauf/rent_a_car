@@ -71,13 +71,30 @@
             <i class="bi bi-person-badge-fill me-2"></i> Funcionários
           </a>
         </li>
-      </ul>
-      <hr />
-      <div class="mt-auto">
-        <a href="#" class="nav-link">
-          <i class="bi bi-gear-fill me-2"></i> Configurações
-        </a>
-      </div>
+        <hr />
+        <li>
+          <a
+            class="nav-link"
+            data-bs-toggle="collapse"
+            href="#configCollapse"
+            role="button"
+            aria-expanded="false"
+            aria-controls="configCollapse"
+          >
+            <i class="bi bi-gear-fill me-2"></i> Configurações
+          </a>
+          <div class="collapse" id="configCollapse">
+            <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
+              <li>
+                <a href="{% url 'list_vehicle_classes' %}" class="nav-link">
+                  Tarifas de Classes
+                </a>
+              </li>
+            </ul>
+          </div>
+        </li>
+      </ul>      
+      </li>
     </div>
 
     <main class="content">{% block content %}{% endblock %}</main>
