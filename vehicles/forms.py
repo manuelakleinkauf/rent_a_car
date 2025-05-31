@@ -4,7 +4,7 @@ from .models import Vehicle, VehicleClass
 class VehicleForm(forms.ModelForm):
     class Meta:
         model = Vehicle
-        fields = ['vehicle_type', 'brand', 'model', 'year', 'color', 'km', 'vehicle_class', 'status', 'description', 'plate']
+        fields = ['vehicle_type', 'brand', 'model', 'year', 'color', 'km', 'vehicle_class', 'status', 'description', 'plate', 'image']
         labels = {
             'vehicle_type': 'Tipo de Veículo',
             'brand': 'Marca',
@@ -16,6 +16,7 @@ class VehicleForm(forms.ModelForm):
             'status': 'Status',
             'description': 'Descrição',
             'plate': 'Placa',
+            'image': 'Imagem do Veículo',
         }
 
         widgets = {
@@ -29,6 +30,7 @@ class VehicleForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'vehicle_class': forms.Select(attrs={'class': 'form-control'}),
             'plate': forms.TextInput(attrs={'class': 'form-control'}),
+            'image': forms.ClearableFileInput(attrs={'class': 'form-control-file'}),
         }
 
 class VehicleClassForm(forms.ModelForm):

@@ -40,5 +40,6 @@ class Vehicle(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     plate = models.CharField(max_length=10, unique=True, default='')
     vehicle_class = models.ForeignKey(VehicleClass, on_delete=models.PROTECT)
+    image = models.ImageField(upload_to='vehicles/images/', blank=True, null=True)
     def __str__(self):
         return f"{self.brand} {self.model} ({self.year})"

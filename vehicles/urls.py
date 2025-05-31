@@ -1,9 +1,12 @@
 from django.urls import path
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
 
 
 urlpatterns = [
-    path('', views.list_vehicles, name='list_vehicles'),
+    path('', views.index, name='index'),
+    path('veiculos/', views.list_vehicles, name='list_vehicles'),
     path('criar/', views.create_vehicle, name='create_vehicle'),
     path('<int:vehicle_id>/', views.get_vehicle_by_id, name='vehicle_detail'),
     path('atualizar/<int:vehicle_id>/', views.update_vehicle, name='update_vehicle'),
@@ -12,4 +15,4 @@ urlpatterns = [
     path('listar-classe/', views.list_vehicle_classes, name='list_vehicle_classes'),
     path('atualizar-classe/<int:vehicle_class_id>/', views.update_vehicle_class, name='update_vehicle_class'),
     path('deletar-classe/<int:vehicle_class_id>/', views.delete_vehicle_class, name='delete_vehicle_class'),
-]
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
