@@ -50,7 +50,8 @@ def client_update(request, id):
             return redirect('client_list')
     else:
         form = ClientForm(instance=client)
-    return render(request, 'clients/form.html', {'form': form})
+    return render(request, 'clients/update.html', {'form': form})
+
 
 def client_delete(request, id):
     client = get_object_or_404(Client, id=id)
