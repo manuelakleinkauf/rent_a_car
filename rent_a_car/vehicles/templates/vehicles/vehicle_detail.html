@@ -1,0 +1,158 @@
+{% extends "base/base.html" %} {% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0">Detalhes do Veículo</h3>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            <div class="form-group mb-3">
+              <label for="id">ID</label>
+              <input
+                type="text"
+                class="form-control"
+                id="id"
+                value="{{ vehicle.id }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="vehicle_type">Tipo</label>
+              <input
+                type="text"
+                class="form-control"
+                id="vehicle_type"
+                value="{{ vehicle.vehicle_type }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="brand">Marca</label>
+              <input
+                type="text"
+                class="form-control"
+                id="brand"
+                value="{{ vehicle.brand }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="model">Modelo</label>
+              <input
+                type="text"
+                class="form-control"
+                id="model"
+                value="{{ vehicle.model }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="year">Ano</label>
+              <input
+                type="text"
+                class="form-control"
+                id="year"
+                value="{{ vehicle.year }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="color">Cor</label>
+              <input
+                type="text"
+                class="form-control"
+                id="color"
+                value="{{ vehicle.color }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="km">Quilometragem</label>
+              <input
+                type="text"
+                class="form-control"
+                id="km"
+                value="{{ vehicle.km }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="status">Status</label>
+              <input
+                type="text"
+                class="form-control"
+                id="status"
+                value="{{ vehicle.status }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="vehicle_class">Classe</label>
+              <input
+                type="text"
+                class="form-control"
+                id="vehicle_class"
+                value="{{ vehicle.vehicle_class }}"
+                disabled
+              />
+            </div>
+            <div class="form-group mb-3">
+              <label for="description">Descrição</label>
+              <textarea class="form-control" id="description" rows="3" disabled>
+{{ vehicle.description }}</textarea
+              >
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="created_at">Data Criação</label>
+              <input
+                type="text"
+                class="form-control"
+                id="created_at"
+                value="{{ vehicle.created_at }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="updated_at">Placa</label>
+              <input
+                type="text"
+                class="form-control"
+                id="plate"
+                value="{{ vehicle.plate }}"
+                disabled
+              />
+
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <a
+                href="{% url 'list_vehicles' %}"
+                class="btn btn-primary d-flex align-items-center"
+              >
+                <i class="bi bi-arrow-left me-2"></i> Voltar
+              </a>
+              <a
+                href="{% url 'update_vehicle' vehicle.id %}"
+                class="btn btn-secondary d-flex align-items-center"
+              >
+                <i class="bi bi-pencil-square me-2"></i> Editar
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
