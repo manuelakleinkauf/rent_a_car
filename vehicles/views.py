@@ -8,7 +8,7 @@ from django.contrib import messages
 
 def create_vehicle(request):
     if request.method == 'POST':
-        form = VehicleForm(request.POST)
+        form = VehicleForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('list_vehicles')
@@ -19,6 +19,15 @@ def create_vehicle(request):
         'form': form,
     }
     return render(request, 'vehicles/create_vehicle.html', dados)
+
+def index(request):
+    count = Vehicle.objects.count()
+    vehicles = Vehicle.objects.filter(status='available')
+    dados = {
+        'total': count,
+        'vehicles': vehicles,
+    }
+    return render(request, 'vehicles/index.html', dados)
 
 def list_vehicles(request):
     count = Vehicle.objects.count()
@@ -39,7 +48,7 @@ def get_vehicle_by_id(request, vehicle_id):
 def update_vehicle(request, vehicle_id):
     vehicle = Vehicle.objects.get(id=vehicle_id)
     if request.method == 'POST':
-        form = VehicleForm(request.POST, instance=vehicle)
+        form = VehicleForm(request.POST, instance=vehicle, files=request.FILES)
         if form.is_valid():
             form.save()
             return redirect('list_vehicles')
