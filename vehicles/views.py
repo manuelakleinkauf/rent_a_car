@@ -21,20 +21,30 @@ def create_vehicle(request):
     return render(request, 'vehicles/create_vehicle.html', dados)
 
 def index(request):
+    query = request.GET.get('search', '')
+    if query:
+        vehicles = Vehicle.objects.filter(plate__icontains=query, status='available') | Vehicle.objects.filter(model__icontains=query, status='available')
+    else:
+        vehicles = Vehicle.objects.filter(status='available')
     count = Vehicle.objects.count()
-    vehicles = Vehicle.objects.filter(status='available')
     dados = {
         'total': count,
         'vehicles': vehicles,
+        'query': query,
     }
     return render(request, 'vehicles/index.html', dados)
 
 def list_vehicles(request):
+    query = request.GET.get('search', '')
     count = Vehicle.objects.count()
-    vehicles = Vehicle.objects.all()
+    if query:
+        vehicles = Vehicle.objects.filter(plate__icontains=query) | Vehicle.objects.filter(model__icontains=query)
+    else:
+        vehicles = Vehicle.objects.all()
     dados = {
         'total': count,
         'vehicles': vehicles,
+        'query': query,
     }
     return render(request, 'vehicles/list_vehicles.html', dados)
 
@@ -99,11 +109,16 @@ def update_vehicle_class(request, vehicle_class_id):
     return render(request, 'vehicle_class/update_vehicle_class.html', dados)
 
 def list_vehicle_classes(request):
-    vehicle_classes = VehicleClass.objects.all()
+    query = request.GET.get('search', '')
+    if query:
+        vehicle_classes = VehicleClass.objects.filter(name__icontains=query)
+    else:
+        vehicle_classes = VehicleClass.objects.all()
     count = vehicle_classes.count()
     dados = {
         'vehicle_classes': vehicle_classes,
         'total': count,
+        'query': query,
     }
     return render(request, 'vehicle_class/list_vehicle_classes.html', dados)
     

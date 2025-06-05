@@ -1,11 +1,14 @@
-{% extends "base/base.html" %}
-{% block content %}
+{% extends "base/base.html" %} {% block content %}
 <div class="container mt-4">
   <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
     <h3 class="mb-0 me-3 text-primary">Clientes</h3>
 
-    <div class="d-flex ms-auto">
-      <form method="get" class="form-inline d-flex me-2" style="min-width: 320px; max-width: 400px;">
+    <div class="d-flex ms-auto align-items-center gap-2">
+      <form
+        method="get"
+        class="d-flex"
+        style="min-width: 320px; max-width: 400px"
+      >
         <input
           class="form-control me-2"
           type="search"
@@ -13,33 +16,37 @@
           value="{{ query|default:'' }}"
           placeholder="Buscar por nome ou CPF"
           aria-label="Buscar"
-          style="min-width: 250px;"
+          style="min-width: 250px"
         />
         <button class="btn btn-outline-primary" type="submit">Buscar</button>
       </form>
 
-      <a href="{% url 'client_create' %}" class="btn btn-primary">
-        Novo Cliente
-      </a>
+      {% if query %}
+      <a href="{% url 'client_list' %}" class="btn btn-outline-secondary"
+        >Limpar</a
+      >
+      {% endif %}
+
+      <a href="{% url 'client_create' %}" class="btn btn-primary"
+        >Novo Cliente</a
+      >
     </div>
   </div>
 
-  {% if messages %}
-    {% for message in messages %}
-    <div
-      class="alert alert-{{ message.tags }} alert-dismissible fade show"
-      role="alert"
-    >
-      {{ message }}
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Fechar"
-      ></button>
-    </div>
-    {% endfor %}
-  {% endif %}
+  {% if messages %} {% for message in messages %}
+  <div
+    class="alert alert-{{ message.tags }} alert-dismissible fade show"
+    role="alert"
+  >
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Fechar"
+    ></button>
+  </div>
+  {% endfor %} {% endif %}
 
   <table class="table table-striped">
     <thead class="table-primary">
@@ -63,27 +70,50 @@
         <td>{{ client.phone_formatado }}</td>
         <td>
           {% if client.active %}
-            <span class="badge bg-success">Ativo</span>
+          <span class="badge bg-success">Ativo</span>
           {% else %}
-            <span class="badge bg-secondary">Inativo</span>
+          <span class="badge bg-secondary">Inativo</span>
           {% endif %}
         </td>
         <td>
-          <a href="{% url 'client_detail' client.id %}" class="btn btn-sm" title="Visualizar">
+          <a
+            href="{% url 'client_detail' client.id %}"
+            class="btn btn-sm"
+            title="Visualizar"
+          >
             <i class="bi bi-eye text-primary"></i>
           </a>
-          <a href="{% url 'client_update' client.id %}" class="btn btn-sm" title="Editar">
+          <a
+            href="{% url 'client_update' client.id %}"
+            class="btn btn-sm"
+            title="Editar"
+          >
             <i class="bi bi-pencil-square text-primary"></i>
           </a>
 
           {% if client.active %}
-            <a href="{% url 'client_inactivate' client.id %}" class="btn btn-sm" title="Inativar" onclick="return confirm('Tem certeza que deseja inativar este cliente?');">
-              <i class="bi bi-person-x text-secondary"></i>
-            </a>
+          <a
+            href="{% url 'client_inactivate' client.id %}"
+            class="btn btn-sm"
+            title="Inativar"
+            onclick="return confirm('Tem certeza que deseja inativar este cliente?');"
+          >
+            <i class="bi bi-person-x text-secondary"></i>
+          </a>
           {% else %}
-            <button class="btn btn-sm" title="Cliente já inativo" disabled style="border:none; background:none; color:gray; cursor:not-allowed;">
-              <i class="bi bi-person-x"></i>
-            </button>
+          <button
+            class="btn btn-sm"
+            title="Cliente já inativo"
+            disabled
+            style="
+              border: none;
+              background: none;
+              color: gray;
+              cursor: not-allowed;
+            "
+          >
+            <i class="bi bi-person-x"></i>
+          </button>
           {% endif %}
 
           <button
@@ -151,7 +181,6 @@
     </tbody>
   </table>
 
-  {% if clients.count == 0 %}
-  {% endif %}
+  {% if clients.count == 0 %} {% endif %}
 </div>
 {% endblock %}
