@@ -4,14 +4,26 @@
     <h3 class="mb-0 me-3 text-primary">Classes de Veículos</h3>
 
     <div class="d-flex ms-auto">
-      <form class="form-inline d-flex me-2">
+      <form class="form-inline d-flex me-2" method="get">
         <input
           class="form-control me-2"
           type="search"
-          placeholder="Buscar"
+          placeholder="Buscar por nome"
           aria-label="Buscar"
+          name="search"
+          value="{{ query|default:'' }}"
         />
-        <button class="btn btn-outline-primary" type="submit">Buscar</button>
+        <button class="btn btn-outline-primary me-2" type="submit">
+          Buscar
+        </button>
+
+        {% if query %}
+        <a
+          href="{% url 'list_vehicle_classes' %}"
+          class="btn btn-outline-secondary"
+          >Limpar</a
+        >
+        {% endif %}
       </form>
 
       <a href="{% url 'create_vehicle_class' %}" class="btn btn-primary">

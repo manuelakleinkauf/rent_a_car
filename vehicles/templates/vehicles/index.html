@@ -1,8 +1,20 @@
 {% extends "base/base.html" %} {% block content %}
 <div class="container mt-5">
-  <h1 class="text-center mb-5">
-    <i class="bi-car-front-fill"></i> Veículos Disponíveis
-  </h1>
+  <form class="form-inline d-flex me-2 mb-5" method="get">
+    <input
+      class="form-control me-2"
+      type="search"
+      placeholder="modelo ou placa"
+      aria-label="Buscar"
+      name="search"
+      value="{{ query|default:'' }}"
+    />
+    <button class="btn btn-outline-primary me-2" type="submit">Buscar</button>
+
+    {% if query %}
+    <a href="{% url 'index' %}" class="btn btn-outline-secondary">Limpar</a>
+    {% endif %}
+  </form>
   <div class="row g-4">
     {% for vehicle in vehicles %}
     <div class="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">
@@ -24,7 +36,7 @@
             <strong>Classe:</strong> {{ vehicle.vehicle_class }}
           </p>
           <div class="mt-auto d-flex justify-content-between">
-            <a href="#" class="btn btn-primary btn-sm w-50 me-1">Alugar</a>
+            <a href="#" class="btn btn-primary btn-sm w-50 me-1">Reservar</a>
             <a
               href="{% url 'vehicle_detail' vehicle.id %}"
               class="btn btn-outline-secondary btn-sm w-50 ms-1"
