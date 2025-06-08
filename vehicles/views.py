@@ -160,7 +160,7 @@ def list_vehicle_classes(request):
         sort = f'-{sort}'
     vehicle_classes = vehicle_classes.order_by(sort)
 
-    paginator = Paginator(vehicle_classes, 1) 
+    paginator = Paginator(vehicle_classes, 10) 
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 

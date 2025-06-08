@@ -4,10 +4,13 @@ from django.contrib import messages
 from django.db.models import Q
 from .models import Client
 from .forms import ClientForm
+from django.core.paginator import Paginator
 
 def client_list(request):
     query = request.GET.get('q', '').strip()  # Busca por nome ou CPF
     clients = Client.objects.all()
+    sort = request.GET.get('sort', 'id')
+    order = request.GET.get('order', 'asc')
 
     if query:
         # Remove pontos, traços e espaços para buscar CPF sem formatação
@@ -17,7 +20,17 @@ def client_list(request):
             Q(name__icontains=query) |
             Q(cpf__icontains=query_clean)
         )
-    return render(request, 'clients/list.html', {'clients': clients, 'query': query})
+
+    if order == 'desc':
+        sort = '-' + sort
+    clients = clients.order_by(sort)
+
+    paginator = Paginator(clients, 10)
+    page_number = request.GET.get('page')
+    clients = paginator.get_page(page_number)
+
+    count = Client.objects.count()  
+    return render(request, 'clients/list.html', {'clients': clients, 'query': query, 'sort': sort, 'order': order, 'total': count, 'page_range': paginator.page_range})
 
 def client_detail(request, id):
     client = get_object_or_404(Client, id=id)
