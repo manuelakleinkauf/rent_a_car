@@ -4,6 +4,7 @@ from .forms import VehicleForm, VehicleClassForm
 from django.shortcuts import get_object_or_404
 from .models import Vehicle, VehicleClass
 from django.contrib import messages
+from django.core.paginator import Paginator
 # Create your views here.
 
 def create_vehicle(request):
@@ -22,30 +23,67 @@ def create_vehicle(request):
 
 def index(request):
     query = request.GET.get('search', '')
+    sort = request.GET.get('sort', 'id')
+    order = request.GET.get('order', 'asc')
+
     if query:
-        vehicles = Vehicle.objects.filter(plate__icontains=query, status='available') | Vehicle.objects.filter(model__icontains=query, status='available')
+        vehicles_list = Vehicle.objects.filter(
+            plate__icontains=query, status='available'
+        ) | Vehicle.objects.filter(
+            model__icontains=query, status='available'
+        )
     else:
-        vehicles = Vehicle.objects.filter(status='available')
+        vehicles_list = Vehicle.objects.filter(status='available')
+    if order == 'desc':
+        sort = '-' + sort
+    vehicles_list = vehicles_list.order_by(sort)
+
+    paginator = Paginator(vehicles_list, 12)
+    page_number = request.GET.get('page')
+    vehicles = paginator.get_page(page_number)
+
     count = Vehicle.objects.count()
+
     dados = {
         'total': count,
         'vehicles': vehicles,
         'query': query,
+        'sort': request.GET.get('sort', 'id'),
+        'order': request.GET.get('order', 'asc'),
+        'page_range': paginator.page_range,
     }
     return render(request, 'vehicles/index.html', dados)
 
+
 def list_vehicles(request):
     query = request.GET.get('search', '')
-    count = Vehicle.objects.count()
+    sort = request.GET.get('sort', 'id')
+    order = request.GET.get('order', 'asc')
+
+    sort_field = sort if order == 'asc' else f'-{sort}'
+
     if query:
         vehicles = Vehicle.objects.filter(plate__icontains=query) | Vehicle.objects.filter(model__icontains=query)
     else:
         vehicles = Vehicle.objects.all()
+
+    vehicles = vehicles.order_by(sort_field)
+
+    paginator = Paginator(vehicles, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    count = Vehicle.objects.count()
+
     dados = {
         'total': count,
-        'vehicles': vehicles,
+        'vehicles': page_obj,
         'query': query,
+        'sort': sort,
+        'order': order,
+        'page_obj': page_obj,
     }
+
     return render(request, 'vehicles/list_vehicles.html', dados)
 
 def get_vehicle_by_id(request, vehicle_id):
@@ -110,15 +148,27 @@ def update_vehicle_class(request, vehicle_class_id):
 
 def list_vehicle_classes(request):
     query = request.GET.get('search', '')
+    sort = request.GET.get('sort', 'id') 
+    order = request.GET.get('order', 'asc')
+    vehicle_classes = VehicleClass.objects.all()
     if query:
-        vehicle_classes = VehicleClass.objects.filter(name__icontains=query)
-    else:
-        vehicle_classes = VehicleClass.objects.all()
-    count = vehicle_classes.count()
+        vehicle_classes = vehicle_classes.filter(
+            Q(name__icontains=query)
+        )
+
+    if order == 'desc':
+        sort = f'-{sort}'
+    vehicle_classes = vehicle_classes.order_by(sort)
+
+    paginator = Paginator(vehicle_classes, 10) 
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
     dados = {
-        'vehicle_classes': vehicle_classes,
-        'total': count,
+        'vehicle_classes': page_obj,
         'query': query,
+        'sort': request.GET.get('sort', 'id'),
+        'order': request.GET.get('order', 'asc'),
     }
     return render(request, 'vehicle_class/list_vehicle_classes.html', dados)
     
