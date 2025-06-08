@@ -48,5 +48,44 @@
     </div>
     {% endfor %}
   </div>
+  <nav aria-label="Paginacao" class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if vehicles.has_previous %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?page={{ vehicles.previous_page_number }}&sort={{ sort }}&order={{ order }}&search={{ query|urlencode }}"
+          aria-label="Anterior"
+        >
+          ‹
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-label="Anterior">‹</span>
+      </li>
+      {% endif %}
+
+      <li class="page-item active">
+        <span class="page-link">{{ vehicles.number }}</span>
+      </li>
+
+      {% if vehicles.has_next %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?page={{ vehicles.next_page_number }}&sort={{ sort }}&order={{ order }}&search={{ query|urlencode }}"
+          aria-label="Próxima"
+        >
+          ›
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-label="Próxima">›</span>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
 </div>
 {% endblock content %}
