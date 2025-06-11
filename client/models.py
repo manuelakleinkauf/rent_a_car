@@ -1,6 +1,7 @@
 from django.db import models
 from django.core.exceptions import ValidationError
 
+
 class Client(models.Model):
     name = models.CharField(max_length=255, verbose_name="Nome")
     cpf = models.CharField(max_length=11, unique=True, verbose_name="CPF")
@@ -16,16 +17,18 @@ class Client(models.Model):
     def clean(self):
         # Valida CPF só com dígitos e tamanho 11
         if not self.cpf.isdigit() or len(self.cpf) != 11:
-            raise ValidationError("CPF inválido. Deve conter exatamente 11 dígitos.")
+            raise ValidationError(
+                "CPF inválido. Deve conter exatamente 11 dígitos.")
         # Valida telefone só com dígitos e tamanho 11
         if not self.phone.isdigit() or len(self.phone) != 11:
-            raise ValidationError("Telefone deve conter 11 dígitos, incluindo DDD.")
+            raise ValidationError(
+                "Telefone deve conter 11 dígitos, incluindo DDD.")
 
     def save(self, *args, **kwargs):
-       self.full_clean()
-       if self.name:
-           self.name = self.name.title()
-       super().save(*args, **kwargs)
+        self.full_clean()
+        if self.name:
+            self.name = self.name.title()
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"{self.name} ({self.cpf})"
@@ -35,7 +38,8 @@ class Client(models.Model):
 
     def deactivate(self):
         if self.has_active_reservations():
-            raise ValidationError("Cliente possui reservas ativas e não pode ser inativado.")
+            raise ValidationError(
+                "Cliente possui reservas ativas e não pode ser inativado.")
         self.active = False
         self.save()
 
@@ -63,9 +67,11 @@ class Reservation(models.Model):
         ('cancelled', 'Cancelada'),
     ]
 
-    client = models.ForeignKey(Client, on_delete=models.RESTRICT, related_name='reservations')
+    client = models.ForeignKey(
+        Client, on_delete=models.RESTRICT, related_name='reservations')
     reservation_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='active')
+    status = models.CharField(
+        max_length=20, choices=STATUS_CHOICES, default='active')
     notes = models.TextField(blank=True, null=True)
 
     class Meta:

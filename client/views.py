@@ -6,6 +6,7 @@ from .models import Client
 from .forms import ClientForm
 from django.core.paginator import Paginator
 
+
 def client_list(request):
     query = request.GET.get('q', '').strip()  # Busca por nome ou CPF
     clients = Client.objects.all()
@@ -29,8 +30,9 @@ def client_list(request):
     page_number = request.GET.get('page')
     clients = paginator.get_page(page_number)
 
-    count = Client.objects.count()  
+    count = Client.objects.count()
     return render(request, 'clients/list.html', {'clients': clients, 'query': query, 'sort': sort, 'order': order, 'total': count, 'page_range': paginator.page_range})
+
 
 def client_detail(request, id):
     client = get_object_or_404(Client, id=id)
@@ -42,6 +44,7 @@ def client_detail(request, id):
         'has_active_reservations': has_active_reservations,
     })
 
+
 def client_create(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
@@ -52,6 +55,7 @@ def client_create(request):
     else:
         form = ClientForm()
     return render(request, 'clients/form.html', {'form': form})
+
 
 def client_update(request, id):
     client = get_object_or_404(Client, id=id)
@@ -69,9 +73,11 @@ def client_update(request, id):
 def client_delete(request, id):
     client = get_object_or_404(Client, id=id)
     if client.active:  # aqui verifica se está ativo
-        messages.error(request, "Não é possível excluir um cliente ativo. Por favor, inative antes de excluir.")
+        messages.error(
+            request, "Não é possível excluir um cliente ativo. Por favor, inative antes de excluir.")
     elif client.reservations.filter(status='active').exists():
-        messages.error(request, "Não é possível excluir. Cliente possui reservas ativas.")
+        messages.error(
+            request, "Não é possível excluir. Cliente possui reservas ativas.")
     else:
         client.delete()
         messages.success(request, "Cliente excluído com sucesso.")
@@ -81,11 +87,10 @@ def client_delete(request, id):
 def client_inactivate(request, id):
     client = get_object_or_404(Client, id=id)
     if client.reservations.filter(status='active').exists():
-        messages.error(request, "Não é possível inativar. Cliente possui reservas ativas.")
+        messages.error(
+            request, "Não é possível inativar. Cliente possui reservas ativas.")
     else:
         client.active = False
         client.save()
         messages.success(request, "Cliente inativado com sucesso.")
     return redirect('client_list')
-
-
