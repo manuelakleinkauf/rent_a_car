@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'client',
+    'employee',
     'users.apps.UsersConfig',
     'vehicles.apps.VehiclesConfig',
     'django.contrib.admin',
