@@ -5,6 +5,7 @@ from django.shortcuts import get_object_or_404
 from .models import Vehicle, VehicleClass
 from django.contrib import messages
 from django.core.paginator import Paginator
+from django.db.models import Q
 # Create your views here.
 
 def create_vehicle(request):
@@ -59,6 +60,8 @@ def list_vehicles(request):
     query = request.GET.get('search', '')
     sort = request.GET.get('sort', 'id')
     order = request.GET.get('order', 'asc')
+    status = request.GET.get('status', '')
+    vehicle_class = request.GET.get('vehicle_class', '')
 
     sort_field = sort if order == 'asc' else f'-{sort}'
 
@@ -66,6 +69,12 @@ def list_vehicles(request):
         vehicles = Vehicle.objects.filter(plate__icontains=query) | Vehicle.objects.filter(model__icontains=query)
     else:
         vehicles = Vehicle.objects.all()
+
+    if status:
+        vehicles = vehicles.filter(status=status)
+
+    if vehicle_class:
+        vehicles = vehicles.filter(vehicle_class_id=vehicle_class) 
 
     vehicles = vehicles.order_by(sort_field)
 
@@ -82,9 +91,13 @@ def list_vehicles(request):
         'sort': sort,
         'order': order,
         'page_obj': page_obj,
+        'vehicle_classes': VehicleClass.objects.all(),
+        'status': status,
+        'selected_class': vehicle_class,
     }
 
     return render(request, 'vehicles/list_vehicles.html', dados)
+
 
 def get_vehicle_by_id(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle, id=vehicle_id)

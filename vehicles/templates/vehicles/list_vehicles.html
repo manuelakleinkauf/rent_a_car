@@ -26,6 +26,41 @@
         >Novo Veículo</a
       >
     </div>
+
+    <div class="dropdown ms-2">
+      <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-funnel-fill text-primary"></i>
+        <span>Filtro</span>
+      </button>
+      <div class="dropdown-menu p-3" style="min-width: 300px;">
+        <form method="get">
+          <div class="mb-2">
+            <select class="form-select" name="vehicle_class">
+              <option value="">Todas as classes</option>
+              {% for cls in vehicle_classes %}
+                <option value="{{ cls.id }}" {% if cls.id|stringformat:"s" == request.GET.vehicle_class %}selected{% endif %}>
+                  {{ cls.name }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+    
+          <div class="mb-2">
+            <select class="form-select" name="status">
+              <option value="">Todos os status</option>
+              <option value="available" {% if request.GET.status == 'available' %}selected{% endif %}>Disponível</option>
+              <option value="rented" {% if request.GET.status == 'rented' %}selected{% endif %}>Alugado</option>
+              <option value="maintenance" {% if request.GET.status == 'maintenance' %}selected{% endif %}>Manutenção</option>
+            </select>
+          </div>
+    
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
+            <a href="{% url 'list_vehicles' %}" class="btn btn-outline-secondary btn-sm">Limpar</a>
+          </div>
+        </form>
+      </div>
+    </div>
   </div>
 
   {% if messages %} {% for message in messages %}
