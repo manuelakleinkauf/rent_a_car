@@ -18,6 +18,8 @@ VEHICLE_BRAND_CHOICES = (
 STATUS_CHOICES = (
     ('available', 'Disponível'),
     ('rented', 'Alugado'),
+    ('maintenance', 'Manutenção'),
+    ('reserved', 'Reservado'),
 )
 
 class VehicleClass(models.Model):
@@ -35,7 +37,7 @@ class Vehicle(models.Model):
     year = models.IntegerField()
     color = models.CharField(max_length=20)
     km = models.IntegerField()
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default='available')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     plate = models.CharField(max_length=10, unique=True, default='')
