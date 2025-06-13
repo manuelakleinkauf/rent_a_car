@@ -1,0 +1,116 @@
+{% extends "base/base.html" %} {% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0">Detalhes da Reserva</h3>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="form-group mb-3">
+              <label for="id">ID</label>
+              <input
+                type="text"
+                class="form-control"
+                id="id"
+                value="{{ reservation.id }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="vehicle">Veículo</label>
+              <input
+                type="text"
+                class="form-control"
+                id="vehicle"
+                value="{{ reservation.vehicle }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="client">Cliente</label>
+              <input
+                type="text"
+                class="form-control"
+                id="client"
+                value="{{ reservation.client }}"
+                disabled
+              />
+            </div>
+
+            <div class="form-group mb-3">
+              <label for="start_date">Data de Início</label>
+              <input
+                type="text"
+                class="form-control"
+                id="start_date"
+                value="{{ reservation.start_date }}"
+                disabled
+              />
+            </div>
+            <div class="form-group mb-3">
+              <label for="end_date">Data de Término</label>
+              <input
+                type="text"
+                class="form-control"
+                id="end_date"
+                value="{{ reservation.end_date }}"
+                disabled
+              />
+            </div>
+            <div class="form-group mb-3">
+              <label for="status">Status</label>
+              <input
+                type="text"
+                class="form-control"
+                id="status"
+                value="{{ reservation.get_status_display }}"
+                disabled
+              />
+            </div>
+            <div class="form-group mb-3">
+              <label for="created_at">Criado em</label>
+              <input
+                type="text"
+                class="form-control"
+                id="created_at"
+                value="{{ reservation.created_at }}"
+                disabled
+              />
+            </div>
+            <div class="form-group mb-3">
+              <label for="updated_at">Atualizado em</label>
+              <input
+                type="text"
+                class="form-control"
+                id="updated_at"
+                value="{{ reservation.updated_at }}"
+                disabled
+              />
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <a
+                href="{% url 'list_reservations' %}"
+                class="btn btn-primary d-flex align-items-center"
+              >
+                <i class="bi bi-arrow-left me-2"></i> Voltar
+              </a>
+              <a
+                href="{% url 'update_reservation' reservation.id %}"
+                class="btn btn-secondary d-flex align-items-center"
+              >
+                <i class="bi bi-pencil-square me-2"></i> Editar
+              </a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
