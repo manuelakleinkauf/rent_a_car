@@ -1,0 +1,151 @@
+{% extends "base/base.html" %} {% block content %}
+<div class="container py-4">
+  <h3 class="mb-3 text-primary">Dashboard Geral</h3>
+
+  <div class="row g-4 mb-3">
+    <div class="col-md-3">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-people-fill"></i>
+          <h6 class="mb-0">Clientes Ativos</h6>
+        </div>
+        <h3 class="fw-bold">{{ active_clients }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-people"></i>
+          <h6 class="mb-0">Clientes Inativos</h6>
+        </div>
+        <h3 class="fw-bold">{{ inactive_clients }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-car-front-fill"></i>
+          <h6 class="mb-0">Veículos Disponíveis</h6>
+        </div>
+        <h3 class="fw-bold">{{ available_vehicles }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-car-front"></i>
+          <h6 class="mb-0">Veículos Totais</h6>
+        </div>
+        <h3 class="fw-bold">{{ total_vehicles }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-3">
+    <div class="col-md-3">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-calendar-fill"></i>
+          <h6 class="mb-0">Reservas Totais</h6>
+        </div>
+        <h3 class="fw-bold">{{ total_reservations }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-calendar-check-fill"></i>
+          <h6 class="mb-0">Reservas Ativas</h6>
+        </div>
+        <h3 class="fw-bold">{{ active_reservations }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-calendar2-check-fill"></i>
+          <h6 class="mb-0">Reservas Concluídas</h6>
+        </div>
+        <h3 class="fw-bold">{{ completed_reservations }}</h3>
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-calendar-x-fill"></i>
+          <h6 class="mb-0">Reservas Canceladas</h6>
+        </div>
+        <h3 class="fw-bold">{{ canceled_reservations }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mb-3">
+    <div class="col-md-4">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-person-badge-fill"></i>
+          <h6 class="mb-0">Funcionários Totais</h6>
+        </div>
+        <h3 class="fw-bold">{{ total_employees }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-person-check-fill"></i>
+          <h6 class="mb-0">Funcionários Ativos</h6>
+        </div>
+        <h3 class="fw-bold">{{ active_employees }}</h3>
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="card bg-white border border-primary shadow-sm rounded-4 p-3">
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <i class="bi bi-person-x-fill"></i>
+          <h6 class="mb-0">Funcionários Inativos</h6>
+        </div>
+        <h3 class="fw-bold">{{ inactive_employees }}</h3>
+      </div>
+    </div>
+  </div>
+
+  <div class="row g-4 mt-4">
+    <div class="col-md-4">
+      <div
+        class="card bg-white border border-primary shadow-sm p-4 text-center rounded-4"
+      >
+        <h5 class="fw-semibold mb-3">Disponibilidade atual de veículos</h5>
+        <div
+          class="position-relative d-inline-block"
+          style="width: 100px; height: 100px"
+        >
+          <div
+            class="progress-circle"
+            style="--value: {{ available_percent }}"
+          ></div>
+          <strong
+            class="position-absolute top-50 start-50 translate-middle fs-5"
+          >
+            {{ available_percent }}%
+          </strong>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .progress-circle {
+    --size: 100px;
+    --value: 0;
+    width: var(--size);
+    height: var(--size);
+    border-radius: 50%;
+    background: conic-gradient(#0d6efd calc(var(--value) * 1%), #e9ecef 0%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+</style>
+{% endblock %}
