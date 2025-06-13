@@ -1,0 +1,262 @@
+{% extends "base/base.html" %} {% block content %}
+<div class="container mt-4">
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <h3 class="mb-0 me-3 text-primary">Reservas</h3>
+
+    <div class="d-flex ms-auto">
+      <form class="form-inline d-flex me-2" method="get">
+        <input
+          class="form-control me-2"
+          type="search"
+          placeholder="Buscar por cliente ou placa"
+          aria-label="Buscar"
+          name="search"
+          value="{{ query|default:'' }}"
+        />
+        <button class="btn btn-outline-primary me-2" type="submit">
+          Buscar
+        </button>
+        {% if query %}
+        <a
+          href="{% url 'list_reservations' %}"
+          class="btn btn-outline-secondary"
+          >Limpar</a
+        >
+        {% endif %}
+      </form>
+
+      <a href="{% url 'create_reservation' %}" class="btn btn-primary"
+        >Nova Reserva</a
+      >
+    </div>
+    <div class="dropdown ms-2">
+      <button class="btn btn-outline-secondary dropdown-toggle d-flex align-items-center gap-1" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="bi bi-funnel-fill text-primary"></i>
+        <span>Filtro</span>
+      </button>
+      <div class="dropdown-menu p-3" style="min-width: 300px;">
+        <form method="get">
+          <div class="mb-2">
+            <select class="form-select" name="status">
+              <option value="">Todos os status</option>
+              <option value="active" {% if request.GET.status == 'active' %}selected{% endif %}>Ativo</option>
+              <option value="returned" {% if request.GET.status == 'returned' %}selected{% endif %}>Retornado</option>
+              <option value="canceled" {% if request.GET.status == 'canceled' %}selected{% endif %}>Cancelado</option>
+              <option value="picked_up" {% if request.GET.status == 'picked_up' %}selected{% endif %}>Retirado</option>
+            </select>
+          </div>
+
+          <div class="d-flex justify-content-between">
+            <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
+            <a href="{% url 'list_reservations' %}" class="btn btn-outline-secondary btn-sm">Limpar</a>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  </div>
+
+  {% if messages %} {% for message in messages %}
+  <div
+    class="alert alert-{{ message.tags }} alert-dismissible fade show"
+    role="alert"
+  >
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Fechar"
+    ></button>
+  </div>
+  {% endfor %} {% endif %}
+
+  <table class="table table-striped table-hover">
+    <thead class="table-primary">
+      <tr>
+        <th>
+          <a
+            href="?sort=id&order={% if sort == 'id' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
+            >ID {% if sort == 'id' %}<i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i
+            >{% endif %}</a
+          >
+        </th>
+        <th>
+          <a
+            href="?sort=client&order={% if sort == 'client' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
+            >Cliente {% if sort == 'client' %}<i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i
+            >{% endif %}</a
+          >
+        </th>
+        <th>
+          <a
+            href="?sort=vehicle&order={% if sort == 'vehicle' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
+            >Veículo {% if sort == 'vehicle' %}<i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i
+            >{% endif %}</a
+          >
+        </th>
+        <th>
+          <a
+            href="?sort=start_date&order={% if sort == 'start_date' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
+            >Data de Início {% if sort == 'start_date' %}<i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i
+            >{% endif %}</a
+          >
+        </th>
+        <th>
+          <a
+            href="?sort=end_date&order={% if sort == 'end_date' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
+            >Data de Fim {% if sort == 'end_date' %}<i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i
+            >{% endif %}</a
+          >
+        </th>
+        <th>
+          <a
+            href="?sort=status&order={% if sort == 'status' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
+            >Status {% if sort == 'status' %}<i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i
+            >{% endif %}</a
+          >
+        </th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for reservation in reservations %}
+      <tr>
+        <td>{{ reservation.id }}</td>
+        <td>{{ reservation.client.name }}</td>
+        <td>{{ reservation.vehicle.plate }}</td>
+        <td>{{ reservation.start_date|date:"d/m/Y" }}</td>
+        <td>{{ reservation.end_date|date:"d/m/Y" }}</td>
+        <td>{{ reservation.get_status_display }}</td>
+        <td>
+          <a
+            href="{% url 'reservation_detail' reservation.id %}"
+            class="btn btn-sm"
+          >
+            <i class="bi bi-eye text-primary"></i>
+          </a>
+          <a
+            href="{% url 'update_reservation' reservation.id %}"
+            class="btn btn-sm"
+          >
+            <i class="bi bi-pencil-square text-primary"></i>
+          </a>
+          <button
+            type="button"
+            class="btn btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteModal{{ reservation.id }}"
+          >
+            <i class="bi bi-trash text-danger"></i>
+          </button>
+
+          <div
+            class="modal fade"
+            id="deleteModal{{ reservation.id }}"
+            tabindex="-1"
+            aria-labelledby="deleteModalLabel{{ reservation.id }}"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5
+                    class="modal-title"
+                    id="deleteModalLabel{{ reservation.id }}"
+                  >
+                    Confirmar Exclusão
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fechar"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  Tem certeza que deseja excluir a reserva
+                  <strong>{{ reservation.id }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancelar
+                  </button>
+                  <form
+                    method="post"
+                    action="{% url 'delete_reservation' reservation.id %}"
+                  >
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                      Excluir
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" class="text-center">Nenhuma reserva encontrada.</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  <nav aria-label="Paginacao">
+    <ul class="pagination justify-content-center">
+      {% if page_obj.has_previous %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?page={{ page_obj.previous_page_number }}&sort={{ sort }}&order={{ order }}&search={{ query|urlencode }}"
+          aria-label="Anterior"
+        >
+          ‹
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-label="Anterior">‹</span>
+      </li>
+      {% endif %}
+
+      <li class="page-item active">
+        <span class="page-link">{{ page_obj.number }}</span>
+      </li>
+
+      {% if page_obj.has_next %}
+      <li class="page-item">
+        <a
+          class="page-link"
+          href="?page={{ page_obj.next_page_number }}&sort={{ sort }}&order={{ order }}&search={{ query|urlencode }}"
+          aria-label="Próxima"
+        >
+          ›
+        </a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-label="Próxima">›</span>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+</div>
+{% endblock content %}
