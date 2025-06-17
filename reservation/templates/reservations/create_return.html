@@ -1,0 +1,31 @@
+{% extends "base/base.html" %} {% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0">Cadastro de Retorno</h3>
+        </div>
+        {% if messages %} {% for message in messages %}
+        <div class="alert alert-info">{{ message }}</div>
+        {% endfor %} {% endif %}
+        <div class="card-body">
+          <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
+            <div class="form-group mb-4">{{ form.as_p }}</div>
+            <div>
+              <p>Total a Pagar: R$ {{ amount_due }}</p>
+            </div>
+            <div class="d-flex justify-content-end gap-2 mt-3">
+              <button type="submit" class="btn btn-primary">Salvar</button>
+              <a href="{% url 'list_reservations' %}" class="btn btn-secondary"
+                >Cancelar</a
+              >
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
