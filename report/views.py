@@ -7,6 +7,9 @@ from django.http import HttpResponse
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from openpyxl import Workbook
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Count, Sum, Min, Max, Q
+from django.utils.timezone import make_aware, datetime
 # Create your views here.
 
 def report_index(request):
@@ -119,4 +122,225 @@ def export_excel(request):
     response = HttpResponse(content_type="application/ms-excel")
     response["Content-Disposition"] = 'attachment; filename="relatorio_dashboard.xlsx"'
     wb.save(response)
+    return response
+
+def client_historic_report(request):
+    clients = Client.objects.all()
+    client = None
+    reservations = []
+    total_reservations = 0
+    status_summary = {'active': 0, 'cancelled': 0, 'picked_up': 0, 'returned': 0}
+    total_amount_spent = 0
+    first_reservation = None
+    last_reservation = None
+
+    client_id = request.POST.get('client_id')
+    start_date_str = request.POST.get('start_date')
+    end_date_str = request.POST.get('end_date')
+
+    if client_id and start_date_str and end_date_str:
+        client = get_object_or_404(Client, id=client_id)
+
+        start_date = make_aware(datetime.strptime(start_date_str, "%Y-%m-%d"))
+        end_date = make_aware(datetime.strptime(end_date_str, "%Y-%m-%d"))
+
+        reservations = Reservation.objects.filter(
+            client=client,
+            created_at__range=[start_date, end_date]
+        )
+
+        total_reservations = reservations.count()
+
+        status_counts = reservations.values('status').annotate(count=Count('id'))
+
+        for item in status_counts:
+            status_summary[item['status']] = item['count']
+
+        for reservation in reservations:
+            rented_days = (reservation.end_date - reservation.start_date).days
+            daily_price = reservation.vehicle.vehicle_class.daily_price
+            total_amount_spent += rented_days * daily_price
+
+        first_reservation = reservations.aggregate(first=Min('start_date'))['first']
+        last_reservation = reservations.aggregate(last=Max('start_date'))['last']
+
+    context = {
+        'clients': clients,
+        'client': client,
+        'reservations': reservations,
+        'total_reservations': total_reservations,
+        'status_summary': status_summary,
+        'total_amount_spent': total_amount_spent,
+        'first_reservation': first_reservation,
+        'last_reservation': last_reservation,
+        'client_id': client_id,
+        'start_date': start_date_str,
+        'end_date': end_date_str,
+    }
+
+    return render(request, 'reports/client_historic_report.html', context)
+
+
+def export_client_historic_report_pdf(request):
+    client_id = request.GET.get('client_id')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    if not client_id or not start_date or not end_date:
+        return HttpResponse("Parâmetros inválidos.", status=400)
+
+    client = get_object_or_404(Client, id=client_id)
+
+    reservations = Reservation.objects.filter(
+        client=client,
+        start_date__range=[start_date, end_date]
+    )
+
+    total_reservations = reservations.count()
+
+    status_summary = {'active': 0, 'cancelled': 0, 'picked_up': 0, 'returned': 0}
+    status_counts = reservations.values('status').annotate(count=Count('id'))
+
+    for item in status_counts:
+        status_summary[item['status']] = item['count']
+
+    total_amount_spent = 0
+    for reservation in reservations:
+        rented_days = (reservation.end_date - reservation.start_date).days
+        daily_price = reservation.vehicle.vehicle_class.daily_price
+        total_amount_spent += rented_days * daily_price
+
+    first_reservation = reservations.aggregate(
+        first=Min('start_date')
+    )['first']
+
+    last_reservation = reservations.aggregate(
+        last=Max('start_date')
+    )['last']
+
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="relatorio_historico_cliente.pdf"'
+
+    pdf = canvas.Canvas(response, pagesize=A4)
+    width, height = A4
+    pdf.setTitle("Relatório Histórico de Clientes")
+    cm = 28.35  
+    y = height - 2 * cm
+
+    pdf.setFont("Helvetica-Bold", 16)
+    pdf.drawString(2 * cm, y, "Relatório Histórico de Cliente")
+    y -= 1 * cm
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(2 * cm, y, "Dados do Cliente:")
+    pdf.setFont("Helvetica", 11)
+    y -= 0.7 * cm
+    pdf.drawString(2.5 * cm, y, f"Nome: {client.name}")
+    y -= 0.5 * cm
+    pdf.drawString(2.5 * cm, y, f"CPF: {client.cpf}")
+    y -= 0.5 * cm
+    pdf.drawString(2.5 * cm, y, f"E-mail: {client.email}")
+    y -= 0.5 * cm
+    pdf.drawString(2.5 * cm, y, f"Telefone: {client.phone}")
+    y -= 0.7 * cm
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(2 * cm, y, "Resumo das Reservas:")
+    pdf.setFont("Helvetica", 11)
+    y -= 0.7 * cm
+    pdf.drawString(2.5 * cm, y, f"Total de Reservas: {total_reservations}")
+    y -= 0.5 * cm
+    pdf.drawString(2.5 * cm, y, f"Ativas: {status_summary['active']}")
+    y -= 0.5 * cm
+    pdf.drawString(2.5 * cm, y, f"Retiradas: {status_summary['picked_up']}")
+    y -= 0.5 * cm
+    pdf.drawString(2.5 * cm, y, f"Retornadas: {status_summary['returned']}")
+    y -= 0.5 * cm
+    pdf.drawString(2.5 * cm, y, f"Canceladas: {status_summary['cancelled']}")
+    y -= 0.5 * cm
+    pdf.drawString(2.5 * cm, y, f"Total Gasto: R$ {total_amount_spent:.2f}")
+    y -= 0.5 * cm
+    pdf.drawString(2.5 * cm, y, f"Primeira Reserva: {first_reservation.strftime('%d/%m/%Y') if first_reservation else '-'}")
+    y -= 0.5 * cm
+    pdf.drawString(2.5 * cm, y, f"Última Reserva: {last_reservation.strftime('%d/%m/%Y') if last_reservation else '-'}")
+    y -= 1 * cm
+
+    pdf.setFont("Helvetica-Bold", 12)
+    pdf.drawString(2 * cm, y, "Detalhes das Reservas:")
+    y -= 0.7 * cm
+
+    pdf.setFont("Helvetica-Bold", 10)
+    pdf.drawString(2 * cm, y, "ID")
+    pdf.drawString(3.5 * cm, y, "Veículo")
+    pdf.drawString(8.5 * cm, y, "Início")
+    pdf.drawString(11 * cm, y, "Fim")
+    pdf.drawString(13.5 * cm, y, "Status")
+    pdf.drawString(16 * cm, y, "Valor")
+    y -= 0.5 * cm
+    pdf.line(2 * cm, y + 0.2 * cm, 19 * cm, y + 0.2 * cm)
+
+    pdf.setFont("Helvetica", 9)
+
+    for r in reservations:
+        if y <= 3 * cm:
+            pdf.showPage()
+            y = height - 2 * cm
+
+        rented_days = (r.end_date - r.start_date).days
+        daily_price = r.vehicle.vehicle_class.daily_price
+        amount = rented_days * daily_price
+
+        pdf.drawString(2 * cm, y, str(r.id))
+        pdf.drawString(3.5 * cm, y, str(r.vehicle.plate)[:25])
+        pdf.drawString(8.5 * cm, y, r.start_date.strftime('%d/%m/%Y'))
+        pdf.drawString(11 * cm, y, r.end_date.strftime('%d/%m/%Y'))
+        pdf.drawString(13.5 * cm, y, r.get_status_display())
+        pdf.drawString(16 * cm, y, f"R$ {amount:.2f}")
+        y -= 0.5 * cm
+
+    pdf.showPage()
+    pdf.save()
+
+    return response
+
+def export_client_historic_report_excel(request):
+    client_id = request.GET.get('client_id')
+    start_date = request.GET.get('start_date')
+    end_date = request.GET.get('end_date')
+
+    if not client_id or not start_date or not end_date:
+        return HttpResponse("Parâmetros inválidos.", status=400)
+
+    client = get_object_or_404(Client, id=client_id)
+
+    reservations = Reservation.objects.filter(
+        client=client,
+        start_date__range=[start_date, end_date]
+    )
+
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = f'attachment; filename="relatorio_historico_cliente_{client.id}.xlsx"'
+
+    workbook = Workbook()
+    worksheet = workbook.active
+    worksheet.title = "Histórico de Reservas"
+
+    headers = ["ID", "Veículo", "Início", "Fim", "Status", "Valor"]
+    worksheet.append(headers)
+
+    for r in reservations:
+        rented_days = (r.end_date - r.start_date).days
+        daily_price = r.vehicle.vehicle_class.daily_price
+        amount = rented_days * daily_price
+
+        worksheet.append([
+            r.id,
+            r.vehicle.plate,
+            r.start_date.strftime('%d/%m/%Y'),
+            r.end_date.strftime('%d/%m/%Y'),
+            r.get_status_display(),
+            f"R$ {amount:.2f}"
+        ])
+
+    workbook.save(response)
     return response

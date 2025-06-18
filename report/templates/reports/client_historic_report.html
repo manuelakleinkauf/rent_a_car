@@ -1,0 +1,121 @@
+{% extends "base/base.html" %}
+{% block content %}
+<div class="container py-4">
+  <div class="card shadow-sm border-0 rounded-4 p-4">
+    <h2 class="mb-4 text-primary">Relatório Histórico de Clientes</h2>
+
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+      <div class="col-md-4">
+        <label for="client" class="form-label fw-semibold">Cliente</label>
+        <select id="client" name="client_id" class="form-select" required>
+          <option value="">Selecione o cliente</option>
+          {% for c in clients %}
+          <option value="{{ c.id }}" {% if c.id|stringformat:"s" == client_id %}selected{% endif %}>
+            {{ c.name }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label for="start_date" class="form-label fw-semibold">Data de Início</label>
+        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}" required />
+      </div>
+
+      <div class="col-md-3">
+        <label for="end_date" class="form-label fw-semibold">Data de Fim</label>
+        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}" required />
+      </div>
+
+      <div class="col-md-2 align-self-end">
+        <button type="submit" class="btn btn-primary w-100">
+         Gerar
+        </button>
+      </div>
+      <div class="row g-2">
+        <div class="col-md-4">
+          <a href="{% url 'client_historic_report' %}" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-arrow-clockwise"></i> Limpar Filtros
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a href="{% url 'export_client_historic_report_pdf' %}?client_id={{ client_id }}&start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-file-earmark-pdf-fill"></i> Exportar PDF
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a href="{% url 'export_client_historic_report_excel' %}?client_id={{ client_id }}&start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-file-type-csv"></i> Exportar Excel
+          </a>
+        </div>
+      </div>
+      
+      </div>
+    </div>
+    </form>
+  </div>
+
+  {% if client %}
+  <div class="card shadow-sm border-0 rounded-4 p-4 mt-4">
+    <h4 class="mb-3 text-secondary">Informações do Cliente</h4>
+    <div class="row">
+      <div class="col-md-6">
+        <p><strong>Nome:</strong> {{ client.name }}</p>
+        <p><strong>CPF:</strong> {{ client.cpf }}</p>
+      </div>
+      <div class="col-md-6">
+        <p><strong>Email:</strong> {{ client.email }}</p>
+        <p><strong>Telefone:</strong> {{ client.phone }}</p>
+      </div>
+    </div>
+
+    <h4 class="mt-4 text-secondary">Resumo</h4>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Total de Reservas: <strong>{{ total_reservations }}</strong></li>
+      <li class="list-group-item">Ativas: <strong>{{ status_summary.active }}</strong></li>
+      <li class="list-group-item">Canceladas: <strong>{{ status_summary.cancelled }}</strong></li>
+      <li class="list-group-item">Retiradas: <strong>{{ status_summary.picked_up }}</strong></li>
+      <li class="list-group-item">Retornadas: <strong>{{ status_summary.returned }}</strong></li>
+      <li class="list-group-item">Total gasto: <strong>R$ {{ total_amount_spent }}</strong></li>
+      <li class="list-group-item">Primeira reserva: <strong>{{ first_reservation|date:"d/m/Y" }}</strong></li>
+      <li class="list-group-item">Última reserva: <strong>{{ last_reservation|date:"d/m/Y" }}</strong></li>
+    </ul>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 p-4 mt-4">
+    <h4 class="mb-3 text-secondary">Detalhes das Reservas</h4>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>ID</th>
+            <th>Veículo</th>
+            <th>Data de Início</th>
+            <th>Data de Fim</th>
+            <th>Status</th>
+            <th>Valor diário</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for reservation in reservations %}
+          <tr>
+            <td>{{ reservation.id }}</td>
+            <td>{{ reservation.vehicle.plate }}</td>
+            <td>{{ reservation.start_date|date:"d/m/Y" }}</td>
+            <td>{{ reservation.end_date|date:"d/m/Y" }}</td>
+            <td>{{ reservation.get_status_display }}</td>
+            <td>R$ {{ reservation.vehicle.vehicle_class.daily_price }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-muted">Nenhuma reserva encontrada.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
