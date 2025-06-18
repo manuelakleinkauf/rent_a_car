@@ -1,5 +1,4 @@
-{% extends "base/base.html" %}
-{% block content %}
+{% extends "base/base.html" %} {% block content %}
 <div class="container mt-4">
   <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
     <h3 class="mb-0 me-3 text-primary">Funcionários</h3>
@@ -34,22 +33,20 @@
     </div>
   </div>
 
-  {% if messages %}
-    {% for message in messages %}
-    <div
-      class="alert alert-{{ message.tags }} alert-dismissible fade show"
-      role="alert"
-    >
-      {{ message }}
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="alert"
-        aria-label="Fechar"
-      ></button>
-    </div>
-    {% endfor %}
-  {% endif %}
+  {% if messages %} {% for message in messages %}
+  <div
+    class="alert alert-{{ message.tags }} alert-dismissible fade show"
+    role="alert"
+  >
+    {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Fechar"
+    ></button>
+  </div>
+  {% endfor %} {% endif %}
 
   <table class="table table-striped">
     <thead class="table-primary">
@@ -58,9 +55,10 @@
           <a
             href="?sort=id&order={% if sort == 'id' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
           >
-            ID
-            {% if sort == 'id' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            ID {% if sort == 'id' %}
+            <i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i>
             {% endif %}
           </a>
         </th>
@@ -68,9 +66,10 @@
           <a
             href="?sort=name&order={% if sort == 'name' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
           >
-            Nome
-            {% if sort == 'name' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            Nome {% if sort == 'name' %}
+            <i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i>
             {% endif %}
           </a>
         </th>
@@ -78,9 +77,10 @@
           <a
             href="?sort=cpf&order={% if sort == 'cpf' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
           >
-            CPF
-            {% if sort == 'cpf' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            CPF {% if sort == 'cpf' %}
+            <i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i>
             {% endif %}
           </a>
         </th>
@@ -88,9 +88,10 @@
           <a
             href="?sort=email&order={% if sort == 'email' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
           >
-            E-mail
-            {% if sort == 'email' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            E-mail {% if sort == 'email' %}
+            <i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i>
             {% endif %}
           </a>
         </th>
@@ -98,9 +99,10 @@
           <a
             href="?sort=phone&order={% if sort == 'phone' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
           >
-            Telefone
-            {% if sort == 'phone' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            Telefone {% if sort == 'phone' %}
+            <i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i>
             {% endif %}
           </a>
         </th>
@@ -108,9 +110,10 @@
           <a
             href="?sort=position&order={% if sort == 'position' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
           >
-            Cargo
-            {% if sort == 'position' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            Cargo {% if sort == 'position' %}
+            <i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i>
             {% endif %}
           </a>
         </th>
@@ -118,9 +121,10 @@
           <a
             href="?sort=active&order={% if sort == 'active' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
           >
-            Status
-            {% if sort == 'active' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            Status {% if sort == 'active' %}
+            <i
+              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
+            ></i>
             {% endif %}
           </a>
         </th>
@@ -135,7 +139,7 @@
         <td>{{ employee.cpf_formatado }}</td>
         <td>{{ employee.email }}</td>
         <td>{{ employee.phone_formatado }}</td>
-        <td>{{ employee.position }}</td>
+        <td>{{ employee.get_position_display }}</td>
         <td>
           {% if employee.active %}
           <span class="badge bg-success">Ativo</span>
@@ -204,7 +208,10 @@
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="deleteModalLabel{{ employee.id }}">
+                  <h5
+                    class="modal-title"
+                    id="deleteModalLabel{{ employee.id }}"
+                  >
                     Confirmar Exclusão
                   </h5>
                   <button
@@ -290,7 +297,9 @@
   </nav>
 
   {% if employees.paginator.count == 0 %}
-  <div class="alert alert-info" role="alert">Nenhum funcionario encontrado.</div>
+  <div class="alert alert-info" role="alert">
+    Nenhum funcionario encontrado.
+  </div>
   {% endif %}
 </div>
 {% endblock %}
