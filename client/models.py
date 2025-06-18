@@ -59,25 +59,3 @@ class Client(models.Model):
             return f"({ddd}) {parte1}-{parte2}"
         return self.phone  # se não tiver 11 dígitos, retorna como está
 
-
-class Reservation(models.Model):
-    STATUS_CHOICES = [
-        ('active', 'Ativa'),
-        ('completed', 'Concluída'),
-        ('cancelled', 'Cancelada'),
-    ]
-
-    client = models.ForeignKey(
-        Client, on_delete=models.RESTRICT, related_name='reservations')
-    reservation_date = models.DateTimeField(auto_now_add=True)
-    status = models.CharField(
-        max_length=20, choices=STATUS_CHOICES, default='active')
-    notes = models.TextField(blank=True, null=True)
-
-    class Meta:
-        verbose_name = "Reserva"
-        verbose_name_plural = "Reservas"
-        ordering = ['-reservation_date']
-
-    def __str__(self):
-        return f"Reserva de {self.client.name} em {self.reservation_date.strftime('%d/%m/%Y %H:%M')} - {self.status}"

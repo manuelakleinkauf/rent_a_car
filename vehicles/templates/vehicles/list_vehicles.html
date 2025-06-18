@@ -180,15 +180,15 @@
       {% for vehicle in vehicles %}
       <tr>
         <td>{{ vehicle.id }}</td>
-        <td>{{ vehicle.brand }}</td>
-        <td>{{ vehicle.model }}</td>
+        <td>{{ vehicle.brand | title }}</td>
+        <td>{{ vehicle.model | title }}</td>
         <td>{{ vehicle.year }}</td>
-        <td>{{ vehicle.color }}</td>
-        <td>{{ vehicle.vehicle_type }}</td>
-        <td>{{ vehicle.plate }}</td>
+        <td>{{ vehicle.color | title }}</td>
+        <td>{{ vehicle.vehicle_type | title }}</td>
+        <td>{{ vehicle.plate | title }}</td>
         <td>{{ vehicle.km }}</td>
-        <td>{{ vehicle.vehicle_class }}</td>
-        <td>{{ vehicle.status }}</td>
+        <td>{{ vehicle.vehicle_class | title }}</td>
+        <td>{{ vehicle.get_status_display }}</td>
         <td>
           <a href="{% url 'vehicle_detail' vehicle.id %}" class="btn btn-sm">
             <i class="bi bi-eye text-primary"></i>

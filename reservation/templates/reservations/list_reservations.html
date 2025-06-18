@@ -135,11 +135,11 @@
       {% for reservation in reservations %}
       <tr>
         <td>{{ reservation.id }}</td>
-        <td>{{ reservation.client.name }}</td>
-        <td>{{ reservation.vehicle.plate }}</td>
+        <td>{{ reservation.client.name | title }}</td>
+        <td>{{ reservation.vehicle.plate | title }}</td>
         <td>{{ reservation.start_date|date:"d/m/Y" }}</td>
         <td>{{ reservation.end_date|date:"d/m/Y" }}</td>
-        <td>{{ reservation.get_status_display }}</td>
+        <td>{{ reservation.get_status_display|title }}</td>
         <td>
           <a
             href="{% url 'reservation_detail' reservation.id %}"

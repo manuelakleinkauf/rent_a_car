@@ -95,9 +95,9 @@
       {% for vehicle_class in vehicle_classes %}
       <tr>
         <td>{{ vehicle_class.id }}</td>
-        <td>{{ vehicle_class.name }}</td>
-        <td>R$ {{ vehicle_class.daily_price }}</td>
-        <td>{{ vehicle_class.description }}</td>
+        <td>{{ vehicle_class.name | title }}</td>
+        <td>R$ {{ vehicle_class.daily_price | floatformat:2 }}</td>
+        <td>{{ vehicle_class.description | title }}</td>
         <td>
           <a
             href="{% url 'update_vehicle_class' vehicle_class.id %}"
