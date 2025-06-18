@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}{% block content %}
+<div class="container mt-4">
+    <div class="card shadow-sm rounded-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">
+                {% if form.instance.pk %}
+                    Editar Manutenção
+                {% else %}
+                    Registrar Nova Manutenção
+                {% endif %}
+            </h4>
+        </div>
+        <div class="card-body">
+            <form method="post">
+                {% csrf_token %}
+                {{ form.non_field_errors }}
+                <div class="mb-3">
+                    <label for="id_reason" class="form-label">Motivo</label>
+                    {{ form.reason}}
+                </div>
+                <div class="mb-3">
+                    <label for="id_expected_end_date" class="form-label">Previsão de Término</label>
+                    {{ form.expected_end_date }}
+                </div>
+                <button type="submit" class="btn btn-success">Salvar</button>
+                <a href="{% url 'list_maintenance' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
