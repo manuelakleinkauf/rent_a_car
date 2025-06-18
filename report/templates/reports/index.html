@@ -1,6 +1,14 @@
 {% extends "base/base.html" %} {% block content %}
 <div class="container py-4">
   <h3 class="mb-3 text-primary">Dashboard Geral</h3>
+  <div class="mb-3">
+    <a href="{% url 'export_PDF' %}" class="btn btn-outline-primary">
+      <i class="bi bi-file-earmark-pdf-fill"></i> Exportar PDF
+    </a>
+    <a href="{% url 'export_excel' %}" class="btn btn-outline-primary">
+      <i class="bi bi-filetype-csv"></i> Exportar Excel
+    </a>
+  </div>
 
   <div class="row g-4 mb-3">
     <div class="col-md-3">

@@ -4,6 +4,7 @@ from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
 from .forms import ReservationForm
+from .forms import PickupForm, ReturnForm
 
 def list_reservations(request):
     query = request.GET.get('search', '')
@@ -154,3 +155,63 @@ def delete_reservation(request, id):
         return redirect('list_reservations')
 
     return render(request, 'reservations/delete.html', {'reservation': reservation})
+
+def create_pickup(request, id):
+    reservation = get_object_or_404(Reservation, id=id)
+    if reservation.status != 'active' and reservation.status != 'ativo':
+        messages.error(request, "A reserva deve estar ativa para registrar a retirada.")
+        return redirect('list_reservations')
+    
+    if request.method == 'POST':
+        form = PickupForm(request.POST)
+        if form.is_valid():
+            reservation.pickup_mileage = form.cleaned_data['pickup_mileage']
+            reservation.pickup_fuel_level = form.cleaned_data['pickup_fuel_level']
+            reservation.pickup_damage_notes = form.cleaned_data['pickup_damage_notes']
+            reservation.status = 'picked_up'
+            vehicle = reservation.vehicle
+            vehicle.status = 'rented'
+            vehicle.save()
+            reservation.save()
+
+            messages.success(request, "Retirada registrada com sucesso.")
+            return redirect('list_reservations')
+    else:
+        form = PickupForm()
+
+    return render(request, 'reservations/create_pickup.html', {'form': form, 'reservation': reservation})
+
+def create_return(request, id):
+    reservation = get_object_or_404(Reservation, id=id)
+    
+    rented_days = (reservation.end_date - reservation.start_date).days
+    amount_due = rented_days * reservation.vehicle.vehicle_class.daily_price
+    amount_due = round(amount_due, 2)
+
+    if reservation.status != 'picked_up':
+        messages.error(request, "A reserva deve estar retirada para registrar o retorno.")
+        return redirect('list_reservations')
+    
+    if request.method == 'POST':
+        form = ReturnForm(request.POST)
+        if form.is_valid():
+            reservation.return_mileage = form.cleaned_data['return_mileage']
+            reservation.return_fuel_level = form.cleaned_data['return_fuel_level']
+            reservation.return_damage_notes = form.cleaned_data['return_damage_notes']
+            
+            reservation.status = 'returned'
+            reservation.vehicle.status = 'available'
+            
+            reservation.vehicle.save()
+            reservation.save()
+
+            messages.success(request, "Informações de retorno salvas com sucesso.")
+            return redirect('list_reservations')
+    else:
+        form = ReturnForm()
+
+    return render(request, 'reservations/create_return.html', {
+        'form': form,
+        'reservation': reservation,
+        'amount_due': amount_due,
+    })
