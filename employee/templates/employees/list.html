@@ -4,22 +4,25 @@
     <h3 class="mb-0 me-3 text-primary">Funcionários</h3>
 
     <div class="d-flex ms-auto align-items-center gap-2">
-      <form
-        method="get"
-        class="d-flex"
-        style="min-width: 320px; max-width: 400px"
-      >
-        <input
-          class="form-control me-2"
-          type="search"
-          name="q"
-          value="{{ query|default:'' }}"
-          placeholder="Buscar por nome ou CPF"
-          aria-label="Buscar"
-          style="min-width: 250px"
-        />
-        <button class="btn btn-outline-primary" type="submit">Buscar</button>
-      </form>
+      <form method="get" class="d-flex" style="min-width: 320px; max-width: 400px">
+  <div class="position-relative w-100 me-2">
+    <input
+      class="form-control ps-5 rounded-pill"
+      type="search"
+      name="q"
+      value="{{ query|default:'' }}"
+      placeholder="Nome ou CPF"
+      aria-label="Buscar"
+      style="min-width: 250px"
+    />
+    <span class="position-absolute top-50 start-0 translate-middle-y ps-3">
+      <i class="bi bi-search text-muted"></i>
+    </span>
+  </div>
+
+  <button class="btn btn-outline-primary" type="submit">Buscar</button>
+</form>
+
 
       {% if query %}
       <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary"
@@ -34,10 +37,8 @@
   </div>
 
   {% if messages %} {% for message in messages %}
-  <div
-    class="alert alert-{{ message.tags }} alert-dismissible fade show"
-    role="alert"
-  >
+  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+
     {{ message }}
     <button
       type="button"
@@ -142,9 +143,9 @@
         <td>{{ employee.get_position_display }}</td>
         <td>
           {% if employee.active %}
-          <span class="badge bg-success">Ativo</span>
+            Ativo
           {% else %}
-          <span class="badge bg-secondary">Inativo</span>
+            Inativo
           {% endif %}
         </td>
         <td>
@@ -168,14 +169,14 @@
             href="{% url 'employee_inactivate' employee.id %}"
             class="btn btn-sm"
             title="Inativar"
-            onclick="return confirm('Tem certeza que deseja inativar este funcionario?');"
+            onclick="return confirm('Tem certeza que deseja inativar este funcionário?');"
           >
             <i class="bi bi-person-x text-secondary"></i>
           </a>
           {% else %}
           <button
             class="btn btn-sm"
-            title="Funcionario já inativo"
+            title="Funcionário já inativo"
             disabled
             style="
               border: none;
@@ -222,7 +223,7 @@
                   ></button>
                 </div>
                 <div class="modal-body">
-                  Tem certeza que deseja excluir o funcionario
+                  Tem certeza que deseja excluir o funcionário
                   <strong>{{ employee.name|title }}</strong>?
                 </div>
                 <div class="modal-footer">
@@ -250,7 +251,7 @@
       </tr>
       {% empty %}
       <tr>
-        <td colspan="8" class="text-center">Nenhum funcionario encontrado.</td>
+        <td colspan="8" class="text-center">Nenhum funcionário encontrado.</td>
       </tr>
       {% endfor %}
     </tbody>
@@ -297,9 +298,6 @@
   </nav>
 
   {% if employees.paginator.count == 0 %}
-  <div class="alert alert-info" role="alert">
-    Nenhum funcionario encontrado.
-  </div>
   {% endif %}
 </div>
 {% endblock %}

@@ -1,20 +1,25 @@
 {% extends "base/base.html" %} {% block content %}
 <div class="container mt-5">
-  <form class="form-inline d-flex me-2 mb-5" method="get">
+  <form class="form-inline d-flex me-2 mb-5" method="get" style="min-width: 1300px; max-width: 500px">
+  <div class="position-relative w-100 me-2">
     <input
-      class="form-control me-2"
+      class="form-control ps-5 rounded-pill"
       type="search"
-      placeholder="modelo ou placa"
+      placeholder="Modelo ou placa"
       aria-label="Buscar"
       name="search"
       value="{{ query|default:'' }}"
     />
-    <button class="btn btn-outline-primary me-2" type="submit">Buscar</button>
-
-    {% if query %}
+    <span class="position-absolute top-50 start-0 translate-middle-y ps-3">
+      <i class="bi bi-search text-muted"></i>
+    </span>
+  </div>
+  <button class="btn btn-outline-primary me-2" type="submit">Buscar</button>
+  {% if query %}
     <a href="{% url 'index' %}" class="btn btn-outline-secondary">Limpar</a>
-    {% endif %}
-  </form>
+  {% endif %}
+</form>
+
   <div class="row g-4">
     {% for vehicle in vehicles %}
     <div class="col-sm-6 col-md-4 col-lg-3 d-flex justify-content-center">

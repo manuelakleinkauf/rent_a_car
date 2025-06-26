@@ -1,26 +1,35 @@
-{% extends "base/base.html" %} {% block content %}
+{% extends "base/base.html" %}
+{% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
       <div class="card shadow">
         <div class="card-header bg-primary text-white text-center">
-          <h3 class="mb-0">Cadastro de Retorno</h3>
+          <h3 class="mb-0">Atualização de Reserva</h3>
         </div>
-        {% if messages %} {% for message in messages %}
-        <div class="alert alert-info">{{ message }}</div>
-        {% endfor %} {% endif %}
+
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+              {{ message }}
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+            </div>
+          {% endfor %}
+        {% endif %}
+
         <div class="card-body">
           <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <div class="form-group mb-4">{{ form.as_p }}</div>
-            <div>
-              <p>Total a Pagar: R$ {{ amount_due }}</p>
+            <div class="form-group mb-4">
+              {{ form.as_p }}
             </div>
-            <div class="d-flex justify-content-end gap-2 mt-3">
-              <button type="submit" class="btn btn-primary">Salvar</button>
-              <a href="{% url 'list_reservations' %}" class="btn btn-secondary"
-                >Cancelar</a
-              >
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <a href="{% url 'list_reservations' %}" class="btn btn-secondary d-flex align-items-center">
+                <i class="bi bi-x-circle me-2"></i> Cancelar
+              </a>
+              <button type="submit" class="btn btn-primary d-flex align-items-center">
+                <i class="bi bi-arrow-repeat me-2"></i> Atualizar
+              </button>
             </div>
           </form>
         </div>
@@ -29,3 +38,4 @@
   </div>
 </div>
 {% endblock %}
+

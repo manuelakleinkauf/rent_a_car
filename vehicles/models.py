@@ -40,7 +40,7 @@ class Vehicle(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='available')
     description = models.TextField(blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    plate = models.CharField(max_length=10, unique=True, default='')
+    plate = models.CharField(max_length=7, unique=True, default='')
     vehicle_class = models.ForeignKey(VehicleClass, on_delete=models.PROTECT)
     image = models.ImageField(upload_to='vehicles/images/', blank=True, null=True)
     def __str__(self):

@@ -83,18 +83,18 @@
         </li>
         <li>
           <a
-            class="nav-link"
+            class="nav-link d-flex justify-content-between align-items-center"
             data-bs-toggle="collapse"
             href="#reportCollapse"
             role="button"
             aria-expanded="false"
             aria-controls="reportCollapse"
           >
-            <i class="bi bi-bar-chart-fill me-2"></i> Relatórios
+            <span><i class="bi bi-bar-chart-fill me-2"></i> Relatórios</span>
+            <i class="bi bi-chevron-down"></i>
           </a>
           <div class="collapse" id="reportCollapse">
-            <ul class="btn-toggle
--nav list-unstyled fw-normal small ps-4">
+            <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
               <li>
                 <a href="{% url 'report_index' %}" class="nav-link">
                   Relatório Geral
@@ -105,20 +105,21 @@
         </li>
         <li>
           <a href="{% url 'maintenance_list' %}" class="nav-link">
-            <i class="bi bi-tools me-2"></i> Manutenção
+            <i class="bi bi-tools me-2"></i> Manutenções
           </a>
         </li>
         <hr />
         <li>
           <a
-            class="nav-link"
+            class="nav-link d-flex justify-content-between align-items-center"
             data-bs-toggle="collapse"
             href="#configCollapse"
             role="button"
             aria-expanded="false"
             aria-controls="configCollapse"
           >
-            <i class="bi bi-gear-fill me-2"></i> Configurações
+            <span><i class="bi bi-gear-fill me-2"></i> Configurações</span>
+            <i class="bi bi-chevron-down"></i>
           </a>
           <div class="collapse" id="configCollapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
@@ -130,8 +131,7 @@
             </ul>
           </div>
         </li>
-      </ul>      
-      </li>
+      </ul>
     </div>
 
     <main class="content">{% block content %}{% endblock %}</main>

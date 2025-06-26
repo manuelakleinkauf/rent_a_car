@@ -4,18 +4,25 @@
     <h3 class="mb-0 me-3 text-primary">Clientes</h3>
 
     <div class="d-flex ms-auto align-items-center gap-2">
-      <form method="get" class="d-flex" style="min-width: 320px; max-width: 400px">
-        <input
-          class="form-control me-2"
-          type="search"
-          name="q"
-          value="{{ query|default:'' }}"
-          placeholder="Buscar por nome ou CPF"
-          aria-label="Buscar"
-          style="min-width: 250px"
-        />
-        <button class="btn btn-outline-primary" type="submit">Buscar</button>
-      </form>
+      <form method="get" class="d-flex position-relative" style="min-width: 320px; max-width: 400px">
+  <div class="position-relative w-100 me-2">
+    <input
+      class="form-control ps-5 rounded-pill"
+      type="search"
+      name="q"
+      value="{{ query|default:'' }}"
+      placeholder="Nome ou CPF"
+      aria-label="Buscar"
+      style="min-width: 250px"
+    />
+    <span class="position-absolute top-50 start-0 translate-middle-y ps-3">
+      <i class="bi bi-search text-muted"></i>
+    </span>
+  </div>
+
+  <button class="btn btn-outline-primary" type="submit">Buscar</button>
+   </form>
+
 
       {% if query %}
       <a href="{% url 'client_list' %}" class="btn btn-outline-secondary">Limpar</a>
@@ -27,7 +34,7 @@
 
   {% if messages %}
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+      <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
         {{ message }}
         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
       </div>
@@ -92,9 +99,9 @@
         <td>{{ client.phone_formatado }}</td>
         <td>
           {% if client.active %}
-          <span class="badge bg-success">Ativo</span>
+           Ativo
           {% else %}
-          <span class="badge bg-secondary">Inativo</span>
+           Inativo
           {% endif %}
         </td>
         <td>
@@ -175,7 +182,6 @@
   </nav>
 
   {% if clients.paginator.count == 0 %}
-  <div class="alert alert-info" role="alert">Nenhum cliente encontrado.</div>
   {% endif %}
 </div>
 {% endblock %}

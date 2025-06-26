@@ -8,13 +8,12 @@ from django.core.paginator import Paginator
 
 
 def employee_list(request):
-    query = request.GET.get('q', '').strip()  # Busca por nome ou CPF
+    query = request.GET.get('q', '').strip()  
     employees = Employee.objects.all()
     sort = request.GET.get('sort', 'id')
     order = request.GET.get('order', 'asc')
 
     if query:
-        # Remove pontos, traços e espaços para buscar CPF sem formatação
         query_clean = re.sub(r'[\.\-\s]', '', query)
 
         employees = employees.filter(
@@ -50,7 +49,7 @@ def employee_create(request):
         form = EmployeeForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Funcionario cadastrado com sucesso.")
+            messages.success(request, "Funcionário cadastrado com sucesso.")
             return redirect('employee_list')
     else:
         form = EmployeeForm()
@@ -63,7 +62,7 @@ def employee_update(request, id):
         form = EmployeeForm(request.POST, instance=employee)
         if form.is_valid():
             form.save()
-            messages.success(request, "Funcionario atualizado com sucesso.")
+            messages.success(request, "Funcionário atualizado com sucesso.")
             return redirect('employee_list')
     else:
         form = EmployeeForm(instance=employee)
@@ -72,15 +71,15 @@ def employee_update(request, id):
 
 def employee_delete(request, id):
     employee = get_object_or_404(Employee, id=id)
-    if employee.active:  # aqui verifica se está ativo
+    if employee.active:  
         messages.error(
-            request, "Não é possível excluir um funcionario ativo. Por favor, inative antes de excluir.")
+            request, "Não é possível excluir um funcionário ativo. Por favor, inative antes de excluir.")
     elif employee.reservations.filter(status='active').exists():
         messages.error(
-            request, "Não é possível excluir. Funcionario possui reservas ativas.")
+            request, "Não é possível excluir. Funcionário possui reservas ativas.")
     else:
         employee.delete()
-        messages.success(request, "Funcionario excluído com sucesso.")
+        messages.success(request, "Funcionário excluído com sucesso.")
     return redirect('employee_list')
 
 
@@ -88,9 +87,9 @@ def employee_inactivate(request, id):
     employee = get_object_or_404(Employee, id=id)
     if employee.reservations.filter(status='active').exists():
         messages.error(
-            request, "Não é possível inativar. Funcionario possui reservas ativas.")
+            request, "Não é possível inativar. Funcionário possui reservas ativas.")
     else:
         employee.active = False
         employee.save()
-        messages.success(request, "Funcionario inativado com sucesso.")
+        messages.success(request, "Funcionário inativado com sucesso.")
     return redirect('employee_list')

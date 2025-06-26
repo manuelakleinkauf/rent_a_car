@@ -1,0 +1,102 @@
+{% extends "base/base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0">Detalhes da Manutenção</h3>
+        </div>
+        <div class="card-body">
+          <form>
+            <div class="mb-3">
+              <label for="id">ID</label>
+              <input type="id" id="id" class="form-control" value="{{ maintenance.vehicle.id }}" disabled>
+            </div> 
+
+            <div class="mb-3">
+              <label for="id_vehicle">Veículo</label>
+              <input type="text" id="id_vehicle" class="form-control" value="{{ maintenance.vehicle.model|default:'Não informado' }}" disabled>
+            </div>
+
+            <div class="mb-3">
+              <label for="id_reason">Motivo</label>
+              <textarea id="id_reason" class="form-control" rows="3" disabled>{{ maintenance.reason|default:"Não informado" }}</textarea>
+            </div>
+
+            <div class="mb-3">
+              <label for="id_start_date">Data Início</label>
+              <input type="text" id="id_start_date" class="form-control" value="{{ maintenance.start_date|date:'d/m/Y' }}" disabled>
+            </div>
+
+            <div class="mb-3">
+              <label for="id_expected_end_date">Previsão de Conclusão</label>
+              <input type="text" id="id_expected_end_date" class="form-control" value="{{ maintenance.expected_end_date|date:'d/m/Y' }}" disabled>
+            </div>
+
+              <div class="d-flex justify-content-end gap-2 mt-4">
+              <a
+                href="{% url 'maintenance_list' %}"
+                class="btn btn-primary d-flex align-items-center"
+              >
+                <i class="bi bi-arrow-left me-2"></i> Voltar
+              </a>
+              <a
+                href="{% url 'maintenance_update' maintenance.id %}"
+                class="btn btn-secondary d-flex align-items-center"
+              >
+                <i class="bi bi-pencil-square me-2"></i> Editar
+              </a>
+            </div>
+
+
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+input, textarea, select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+textarea {
+  height: 38px;
+  resize: none;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.form-check input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+</style>
+{% endblock %}

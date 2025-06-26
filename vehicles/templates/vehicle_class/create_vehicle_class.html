@@ -1,4 +1,25 @@
-{% extends "base/base.html" %} {% block content %}
+{% extends "base/base.html" %}
+{% block content %}
+<style>
+  .money-input-wrapper {
+    position: relative;
+  }
+
+  .money-symbol {
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translateY(-50%);
+    color: #000000; /* cor clarinha */
+    font-size: 0.9rem;
+    pointer-events: none;
+  }
+
+  .money-input-wrapper input {
+    padding-left: 30px !important; /* espaço pro R$ */
+  }
+</style>
+
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
@@ -9,7 +30,24 @@
         <div class="card-body">
           <form method="post">
             {% csrf_token %}
-            <div class="form-group mb-4">{{ form.as_p }}</div>
+
+            <div class="mb-3">
+              <label for="{{ form.name.id_for_label }}" class="form-label">Nome da Classe:</label>
+              {{ form.name }}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.description.id_for_label }}" class="form-label">Descrição:</label>
+              {{ form.description }}
+            </div>
+
+            <div class="mb-3">
+              <label for="{{ form.daily_price.id_for_label }}" class="form-label">Preço Diário:</label>
+              <div class="money-input-wrapper">
+                <span class="money-symbol">R$</span>
+                {{ form.daily_price }}
+              </div>
+            </div>
 
             <div class="d-flex justify-content-end gap-2 mt-3">
               <a
@@ -37,4 +75,7 @@
     </div>
   </div>
 </div>
+
+
 {% endblock %}
+
