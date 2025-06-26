@@ -21,13 +21,7 @@ class ReservationForm(forms.ModelForm):
                 attrs={'type': 'date', 'class': 'form-control'},
                 format='%Y-%m-%d'
             ),
-            'status': forms.Select(attrs={'class': 'form-control'}),
-            'vehicle': forms.TextInput(attrs={
-                'class': 'form-control',
-                'maxlength': '7',
-                'oninput': 'this.value = this.value.toUpperCase();',
-                'pattern': '[A-Z]{3}[0-9]{1}[A-Z]{1}[0-9]{2}',
-                'title': 'Formato: ABC1D23 (3 letras, 1 número, 1 letra, 2 números)',}),
+            'vehicle': forms.Select(attrs={'class': 'form-control'}),
             'client': forms.Select(attrs={'class': 'form-control'}),
         }
 
