@@ -4,25 +4,30 @@
     <h3 class="mb-0 me-3 text-primary">Funcionários</h3>
 
     <div class="d-flex ms-auto align-items-center gap-2">
-      <form method="get" class="d-flex" style="min-width: 320px; max-width: 400px">
-  <div class="position-relative w-100 me-2">
-    <input
-      class="form-control ps-5 rounded-pill"
-      type="search"
-      name="q"
-      value="{{ query|default:'' }}"
-      placeholder="Nome ou CPF"
-      aria-label="Buscar"
-      style="min-width: 250px"
-    />
-    <span class="position-absolute top-50 start-0 translate-middle-y ps-3">
-      <i class="bi bi-search text-muted"></i>
-    </span>
-  </div>
+      <form
+        method="get"
+        class="d-flex"
+        style="min-width: 320px; max-width: 400px"
+      >
+        <div class="position-relative w-100 me-2">
+          <input
+            class="form-control ps-5 rounded-pill"
+            type="search"
+            name="q"
+            value="{{ query|default:'' }}"
+            placeholder="Nome ou CPF"
+            aria-label="Buscar"
+            style="min-width: 250px"
+          />
+          <span
+            class="position-absolute top-50 start-0 translate-middle-y ps-3"
+          >
+            <i class="bi bi-search text-muted"></i>
+          </span>
+        </div>
 
-  <button class="btn btn-outline-primary" type="submit">Buscar</button>
-</form>
-
+        <button class="btn btn-outline-primary" type="submit">Buscar</button>
+      </form>
 
       {% if query %}
       <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary"
@@ -37,8 +42,10 @@
   </div>
 
   {% if messages %} {% for message in messages %}
-  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
-
+  <div
+    class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+    role="alert"
+  >
     {{ message }}
     <button
       type="button"
@@ -141,13 +148,7 @@
         <td>{{ employee.email }}</td>
         <td>{{ employee.phone_formatado }}</td>
         <td>{{ employee.get_position_display }}</td>
-        <td>
-          {% if employee.active %}
-            Ativo
-          {% else %}
-            Inativo
-          {% endif %}
-        </td>
+        <td>{% if employee.active %} Ativo {% else %} Inativo {% endif %}</td>
         <td>
           <a
             href="{% url 'employee_detail' employee.id %}"
@@ -165,14 +166,65 @@
           </a>
 
           {% if employee.active %}
-          <a
-            href="{% url 'employee_inactivate' employee.id %}"
+          <button
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#inactivateModal{{ employee.id }}"
             class="btn btn-sm"
-            title="Inativar"
-            onclick="return confirm('Tem certeza que deseja inativar este funcionário?');"
+            title="Inativar Funcionário"
+            style="border: none; background: none"
           >
             <i class="bi bi-person-x text-secondary"></i>
-          </a>
+          </button>
+
+          <div
+            class="modal fade"
+            id="inactivateModal{{ employee.id }}"
+            tabindex="-1"
+            aria-labelledby="inactivateModalLabel{{ employee.id }}"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5
+                    class="modal-title"
+                    id="inactivateModalLabel{{ employee.id }}"
+                  >
+                    Confirmar Inativação
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fechar"
+                  ></button>
+                </div>
+                <div class="modal-body">
+                  Tem certeza que deseja inativar o funcionário
+                  <strong>{{ employee.name|title }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancelar
+                  </button>
+                  <form
+                    method="post"
+                    action="{% url 'employee_inactivate' employee.id %}"
+                  >
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">
+                      Inativar
+                    </button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
           {% else %}
           <button
             class="btn btn-sm"
@@ -297,7 +349,6 @@
     </ul>
   </nav>
 
-  {% if employees.paginator.count == 0 %}
-  {% endif %}
+  {% if employees.paginator.count == 0 %} {% endif %}
 </div>
 {% endblock %}

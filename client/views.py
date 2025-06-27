@@ -72,17 +72,16 @@ def client_update(request, id):
 
 def client_delete(request, id):
     client = get_object_or_404(Client, id=id)
-    if client.active:  # aqui verifica se está ativo
-        messages.error(
-            request, "Não é possível excluir um cliente ativo. Por favor, inative antes de excluir.")
+    if client.active:
+        messages.error(request, "Não é possível excluir um cliente ativo. Por favor, inative antes de excluir.")
     elif client.reservations.filter(status='active').exists():
-        messages.error(
-            request, "Não é possível excluir. Cliente possui reservas ativas.")
+        messages.error(request, "Não é possível excluir. Cliente possui reservas ativas.")
+    elif client.reservations.exists():
+        messages.error(request, "Não é possível excluir. Cliente possui reservas registradas no sistema.")
     else:
         client.delete()
         messages.success(request, "Cliente excluído com sucesso.")
     return redirect('client_list')
-
 
 def client_inactivate(request, id):
     client = get_object_or_404(Client, id=id)
