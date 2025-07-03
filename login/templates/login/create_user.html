@@ -1,0 +1,13 @@
+{% extends "base/base.html" %} {% block content %}
+
+<div class="container col-6 my-4">
+  <h2 class="text-center mb-4">Cadastro de Usuário</h2>
+
+  <form method="post">
+    {% csrf_token %} {{ form.as_p }}
+    <div class="text-center mt-3">
+      <button type="submit" class="btn btn-success">Cadastrar</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

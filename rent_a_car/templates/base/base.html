@@ -50,7 +50,10 @@
   </head>
   <body>
     <div class="sidebar d-flex flex-column p-3">
-      <a href="{% url 'index' %}" class="d-flex align-items-center mb-3 text-decoration-none">
+      <a
+        href="{% url 'index' %}"
+        class="d-flex align-items-center mb-3 text-decoration-none"
+      >
         <i class="bi bi-car-front-fill me-2" style="font-size: 1.5rem"></i>
         <span class="fs-4">Rent a Car</span>
       </a>
@@ -132,6 +135,20 @@
           </div>
         </li>
       </ul>
+      <ul>
+        <li class="mt-auto">
+          <a href="{% url 'create_user' %}" class="nav-link">
+            <i class="bi bi-person-plus-fill me-2"></i> Criar Usuário
+          </a>
+        </li>
+      </ul>
+      {% if user.is_authenticated %}
+      <div class="mt-auto">
+        <a href="{% url 'logout' %}" class="btn btn-outline-danger w-100">
+          <i class="bi bi-box-arrow-right me-2"></i> Sair
+        </a>
+      </div>
+      {% endif %}
     </div>
 
     <main class="content">{% block content %}{% endblock %}</main>

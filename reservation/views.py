@@ -5,7 +5,9 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from .forms import ReservationForm
 from .forms import PickupForm, ReturnForm
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def list_reservations(request):
     query = request.GET.get('search', '')
     sort = request.GET.get('sort', 'id')
@@ -40,12 +42,12 @@ def list_reservations(request):
     }
     return render(request, 'reservations/list_reservations.html', context)
 
-
+@login_required
 def reservation_detail(request, id):
     reservation = get_object_or_404(Reservation, id=id)
     return render(request, 'reservations/reservation_detail.html', {'reservation': reservation})
 
-
+@login_required
 def create_reservation(request):
     if request.method == 'POST':
         form = ReservationForm(request.POST)
@@ -78,7 +80,7 @@ def create_reservation(request):
 
     return render(request, 'reservations/create_reservation.html', {'form': form})
 
-
+@login_required
 def update_reservation(request, id):
     reservation = get_object_or_404(Reservation, id=id)
     original_vehicle = reservation.vehicle
@@ -135,7 +137,7 @@ def update_reservation(request, id):
         'reservation': reservation
     })
 
-
+@login_required
 def delete_reservation(request, id):
     reservation = get_object_or_404(Reservation, id=id)
     print(reservation.status)
@@ -156,6 +158,7 @@ def delete_reservation(request, id):
 
     return render(request, 'reservations/delete.html', {'reservation': reservation})
 
+@login_required
 def create_pickup(request, id):
     reservation = get_object_or_404(Reservation, id=id)
     if reservation.status != 'active' and reservation.status != 'ativo':
@@ -181,6 +184,7 @@ def create_pickup(request, id):
 
     return render(request, 'reservations/create_pickup.html', {'form': form, 'reservation': reservation})
 
+@login_required
 def create_return(request, id):
     reservation = get_object_or_404(Reservation, id=id)
     

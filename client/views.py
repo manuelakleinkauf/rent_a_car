@@ -5,8 +5,9 @@ from django.db.models import Q
 from .models import Client
 from .forms import ClientForm
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def client_list(request):
     query = request.GET.get('q', '').strip()  # Busca por nome ou CPF
     clients = Client.objects.all()
@@ -33,7 +34,7 @@ def client_list(request):
     count = Client.objects.count()
     return render(request, 'clients/list.html', {'clients': clients, 'query': query, 'sort': sort, 'order': order, 'total': count, 'page_range': paginator.page_range})
 
-
+@login_required
 def client_detail(request, id):
     client = get_object_or_404(Client, id=id)
     active_reservations = client.reservations.filter(status='active')
@@ -44,7 +45,7 @@ def client_detail(request, id):
         'has_active_reservations': has_active_reservations,
     })
 
-
+@login_required
 def client_create(request):
     if request.method == 'POST':
         form = ClientForm(request.POST)
@@ -56,7 +57,7 @@ def client_create(request):
         form = ClientForm()
     return render(request, 'clients/form.html', {'form': form})
 
-
+@login_required
 def client_update(request, id):
     client = get_object_or_404(Client, id=id)
     if request.method == 'POST':
@@ -69,7 +70,7 @@ def client_update(request, id):
         form = ClientForm(instance=client)
     return render(request, 'clients/update.html', {'form': form})
 
-
+@login_required
 def client_delete(request, id):
     client = get_object_or_404(Client, id=id)
     if client.active:
@@ -83,6 +84,7 @@ def client_delete(request, id):
         messages.success(request, "Cliente excluído com sucesso.")
     return redirect('client_list')
 
+@login_required
 def client_inactivate(request, id):
     client = get_object_or_404(Client, id=id)
     if client.reservations.filter(status='active').exists():

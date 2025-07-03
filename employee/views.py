@@ -5,8 +5,9 @@ from django.db.models import Q
 from .models import Employee
 from .forms import EmployeeForm
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def employee_list(request):
     query = request.GET.get('q', '').strip()  
     employees = Employee.objects.all()
@@ -32,7 +33,7 @@ def employee_list(request):
     count = Employee.objects.count()
     return render(request, 'employees/list.html', {'employees': employees, 'query': query, 'sort': sort, 'order': order, 'total': count, 'page_range': paginator.page_range})
 
-
+@login_required
 def employee_detail(request, id):
     employee = get_object_or_404(Employee, id=id)
     active_reservations = employee.reservations.filter(status='active')
@@ -43,7 +44,7 @@ def employee_detail(request, id):
         'has_active_reservations': has_active_reservations,
     })
 
-
+@login_required
 def employee_create(request):
     if request.method == 'POST':
         form = EmployeeForm(request.POST)
@@ -55,7 +56,7 @@ def employee_create(request):
         form = EmployeeForm()
     return render(request, 'employees/form.html', {'form': form})
 
-
+@login_required
 def employee_update(request, id):
     employee = get_object_or_404(Employee, id=id)
     if request.method == 'POST':
@@ -68,7 +69,7 @@ def employee_update(request, id):
         form = EmployeeForm(instance=employee)
     return render(request, 'employees/update.html', {'form': form})
 
-
+@login_required
 def employee_delete(request, id):
     employee = get_object_or_404(Employee, id=id)
     if employee.active:  
@@ -82,7 +83,7 @@ def employee_delete(request, id):
         messages.success(request, "Funcionário excluído com sucesso.")
     return redirect('employee_list')
 
-
+@login_required
 def employee_inactivate(request, id):
     employee = get_object_or_404(Employee, id=id)
     if employee.reservations.filter(status='active').exists():

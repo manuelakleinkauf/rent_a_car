@@ -5,7 +5,9 @@ from .forms import MaintenanceForm
 from django.core.paginator import Paginator
 from django.utils import timezone
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def create_maintenance(request):
     if request.method == 'POST':
         form = MaintenanceForm(request.POST)
@@ -21,6 +23,7 @@ def create_maintenance(request):
 
     return render(request, 'maintenance/create.html', {'form': form})
 
+@login_required
 def maintenance_complete(request, maintenance_id):
     maintenance = get_object_or_404(Maintenance, id=maintenance_id)
 
@@ -30,6 +33,7 @@ def maintenance_complete(request, maintenance_id):
 
     return redirect('maintenance_list')
 
+@login_required
 def maintenance_list(request):
     search_query = request.GET.get('q', '')
     sort = request.GET.get('sort', 'start_date')  
@@ -56,6 +60,7 @@ def maintenance_list(request):
         'order': order,
     })
 
+@login_required
 def maintenance_update(request, id):
     maintenance = get_object_or_404(Maintenance, id=id)
     if request.method == 'POST':
@@ -77,11 +82,12 @@ def maintenance_update(request, id):
     return render(request, 'maintenance/update.html', {'form': form})
 
 
+@login_required
 def maintenance_detail(request, id):
     maintenance = get_object_or_404(Maintenance, id=id)
     return render(request, 'maintenance/detail.html', {'maintenance': maintenance})
 
-
+@login_required
 def maintenance_delete(request, id):
     maintenance = get_object_or_404(Maintenance, id=id)
     
