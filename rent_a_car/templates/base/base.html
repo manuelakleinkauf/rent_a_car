@@ -104,6 +104,20 @@
                 </a>
               </li>
             </ul>
+            <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
+              <li>
+                <a href="{% url 'client_historic_report' %}" class="nav-link">
+                  Relatório de Clientes
+                </a>
+              </li>
+            </ul>
+            <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
+              <li>
+                <a href="{% url 'vehicle_historic_report' %}" class="nav-link">
+                  Relatório de Veículos
+                </a>
+              </li>
+            </ul>
           </div>
         </li>
         <li>
@@ -132,19 +146,19 @@
                 </a>
               </li>
             </ul>
+            <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
+              <li>
+                <a href="{% url 'create_user' %}" class="nav-link">
+                  Criar usuário
+                </a>
+              </li>
+            </ul>
           </div>
-        </li>
-      </ul>
-      <ul>
-        <li class="mt-auto">
-          <a href="{% url 'create_user' %}" class="nav-link">
-            <i class="bi bi-person-plus-fill me-2"></i> Criar Usuário
-          </a>
         </li>
       </ul>
       {% if user.is_authenticated %}
       <div class="mt-auto">
-        <a href="{% url 'logout' %}" class="btn btn-outline-danger w-100">
+        <a href="{% url 'logout' %}" class="w-100">
           <i class="bi bi-box-arrow-right me-2"></i> Sair
         </a>
       </div>

@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'client',
     'employee',
     'reservation',
-    'users.apps.UsersConfig',
     'vehicles.apps.VehiclesConfig',
     'report',
     'django.contrib.admin',

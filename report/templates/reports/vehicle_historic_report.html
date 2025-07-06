@@ -1,0 +1,156 @@
+{% extends "base/base.html" %}
+{% block content %}
+<div class="container py-4">
+  <div class="card shadow-sm border-0 rounded-4 p-4">
+    <h2 class="mb-4 text-primary">Relatório Histórico de Veículos</h2>
+
+    <form method="post" class="row g-3">
+      {% csrf_token %}
+      <div class="col-md-4">
+        <label for="vehicle" class="form-label fw-semibold">Veículo</label>
+        <select id="vehicle" name="vehicle_id" class="form-select" required>
+          <option value="">Selecione o veículo</option>
+          {% for v in vehicles %}
+          <option value="{{ v.id }}" {% if v.id|stringformat:"s" == vehicle_id %}selected{% endif %}>
+            {{ v.plate }} - {{ v.model }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="col-md-3">
+        <label for="start_date" class="form-label fw-semibold">Data de Início</label>
+        <input type="date" class="form-control" id="start_date" name="start_date" value="{{ start_date }}" required />
+      </div>
+
+      <div class="col-md-3">
+        <label for="end_date" class="form-label fw-semibold">Data de Fim</label>
+        <input type="date" class="form-control" id="end_date" name="end_date" value="{{ end_date }}" required />
+      </div>
+
+      <div class="col-md-2 align-self-end">
+        <button type="submit" class="btn btn-primary w-100">Gerar</button>
+      </div>
+
+      <div class="row g-2">
+        <div class="col-md-4">
+          <a href="{% url 'vehicle_historic_report' %}" class="btn btn-outline-secondary w-100">
+            <i class="bi bi-arrow-clockwise"></i> Limpar Filtros
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a href="{% url 'export_vehicle_historic_report_pdf' %}?vehicle_id={{ vehicle_id }}&start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-file-earmark-pdf-fill"></i> Exportar PDF
+          </a>
+        </div>
+        <div class="col-md-4">
+          <a href="{% url 'export_vehicle_historic_report_excel' %}?vehicle_id={{ vehicle_id }}&start_date={{ start_date }}&end_date={{ end_date }}" class="btn btn-outline-primary w-100">
+            <i class="bi bi-file-type-csv"></i> Exportar Excel
+          </a>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  {% if vehicle %}
+  <div class="card shadow-sm border-0 rounded-4 p-4 mt-4">
+    <h4 class="mb-3 text-secondary">Informações do Veículo</h4>
+    <div class="row">
+      <div class="col-md-6">
+        <p><strong>Placa:</strong> {{ vehicle.plate }}</p>
+        <p><strong>Modelo:</strong> {{ vehicle.model }}</p>
+        <p><strong>Marca:</strong> {{ vehicle.brand }}</p>
+      </div>
+      <div class="col-md-6">
+        <p><strong>Ano:</strong> {{ vehicle.year }}</p>
+        <p><strong>Status Atual:</strong> {{ vehicle.get_status_display }}</p>
+      </div>
+    </div>
+
+    <h4 class="mt-4 text-secondary">Resumo</h4>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">Total de Reservas: <strong>{{ total_reservations }}</strong></li>
+      <li class="list-group-item">Ativas: <strong>{{ status_summary.active }}</strong></li>
+      <li class="list-group-item">Retiradas: <strong>{{ status_summary.picked_up }}</strong></li>
+      <li class="list-group-item">Retornadas: <strong>{{ status_summary.returned }}</strong></li>
+      <li class="list-group-item">Canceladas: <strong>{{ status_summary.canceled }}</strong></li>
+      <li class="list-group-item">Total arrecadado: <strong>R$ {{ total_amount_collected }}</strong></li>
+      <li class="list-group-item">Total de Manutenções: <strong>{{ maintenance_count }}</strong></li>
+      <li class="list-group-item">Última manutenção: <strong>{{ last_maintenance_date|date:"d/m/Y" }}</strong></li>
+    </ul>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 p-4 mt-4">
+    <h4 class="mb-3 text-secondary">Reservas</h4>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle">
+        <thead class="table-primary">
+          <tr>
+            <th>ID</th>
+            <th>Cliente</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Status</th>
+            <th>Valor por Dia</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for r in reservations %}
+          <tr>
+            <td>{{ r.id }}</td>
+            <td>{{ r.client.name }}</td>
+            <td>{{ r.start_date|date:"d/m/Y" }}</td>
+            <td>{{ r.end_date|date:"d/m/Y" }}</td>
+            <td>{{ r.get_status_display }}</td>
+            <td>R$ {{ r.vehicle.vehicle_class.daily_price|floatformat:2 }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="6" class="text-center text-muted">Nenhuma reserva encontrada.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card shadow-sm border-0 rounded-4 p-4 mt-4">
+    <h4 class="mb-3 text-secondary">Manutenções</h4>
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle">
+        <thead class="table-danger">
+          <tr>
+            <th>ID</th>
+            <th>Motivo</th>
+            <th>Início</th>
+            <th>Fim</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for m in maintenances %}
+          <tr>
+            <td>{{ m.id }}</td>
+            <td>{{ m.reason|truncatewords:10 }}</td>
+            <td>{{ m.start_date|date:"d/m/Y H:i" }}</td>
+            <td>
+              {% if m.end_date %}
+                {{ m.end_date|date:"d/m/Y H:i" }}
+              {% else %}
+                -
+              {% endif %}
+            </td>
+            <td>{{ m.get_status_display }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="5" class="text-center text-muted">Nenhuma manutenção registrada.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
