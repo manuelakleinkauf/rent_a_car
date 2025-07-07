@@ -1,30 +1,32 @@
-{% extends "base/base.html" %} {% block content %}
+{% extends "base/base.html" %}
+{% block content %}
 <div class="container mt-4">
   <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
     <h3 class="mb-0 me-3 text-primary">Veículos</h3>
 
     <div class="d-flex ms-auto">
-      <form class="form-inline d-flex me-2" method="get">
-        <input
-          class="form-control me-2"
-          type="search"
-          placeholder="modelo ou placa"
-          aria-label="Buscar"
-          name="search"
-          value="{{ query|default:'' }}"
-        />
-        <button class="btn btn-outline-primary me-2" type="submit">
-          Buscar
-        </button>
-        {% if query %}
-        <a href="{% url 'list_vehicles' %}" class="btn btn-outline-secondary"
-          >Limpar</a
-        >
-        {% endif %}
-      </form>
-      <a href="{% url 'create_vehicle' %}" class="btn btn-primary"
-        >Novo Veículo</a
-      >
+     <form class="form-inline d-flex" method="get" style="min-width: 320px; max-width: 500px">
+  <div class="position-relative w-100 me-2">
+    <input
+      class="form-control ps-5 rounded-pill"
+      type="search"
+      placeholder="Modelo ou placa"
+      aria-label="Buscar"
+      name="search"
+      value="{{ query|default:'' }}"
+    />
+    <span class="position-absolute top-50 start-0 translate-middle-y ps-3">
+      <i class="bi bi-search text-muted"></i>
+    </span>
+  </div>
+
+  <button class="btn btn-outline-primary me-2" type="submit">Buscar</button>
+  </form>
+
+  {% if query %}
+    <a href="{% url 'list_vehicles' %}" class="btn btn-outline-secondary me-2">Limpar</a>
+  {% endif %}
+      <a href="{% url 'create_vehicle' %}" class="btn btn-primary me-2">Novo Veículo</a>
     </div>
 
     <div class="dropdown ms-2">
@@ -44,7 +46,7 @@
               {% endfor %}
             </select>
           </div>
-    
+
           <div class="mb-2">
             <select class="form-select" name="status">
               <option value="">Todos os status</option>
@@ -54,7 +56,7 @@
               <option value="reserved" {% if request.GET.status == 'reserved' %}selected{% endif %}>Reservado</option>
             </select>
           </div>
-    
+
           <div class="d-flex justify-content-between">
             <button type="submit" class="btn btn-primary btn-sm">Aplicar</button>
             <a href="{% url 'list_vehicles' %}" class="btn btn-outline-secondary btn-sm">Limpar</a>
@@ -64,187 +66,87 @@
     </div>
   </div>
 
-  {% if messages %} {% for message in messages %}
-  <div
-    class="alert alert-{{ message.tags }} alert-dismissible fade show"
-    role="alert"
-  >
-    {{ message }}
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="alert"
-      aria-label="Fechar"
-    ></button>
-  </div>
-  {% endfor %} {% endif %}
-  <p class="text-muted">{{ vehicles.paginator.count }} veículos registrados</p>
+  {% if messages %}
+    {% for message in messages %}
+    <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+      {{ message }}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+    </div>
+    {% endfor %}
+  {% endif %}
+
   <table class="table table-striped">
-    <thead class="table-primary">
-      <tr>
-        <th>
-          <a
-            href="?sort=id&order={% if sort == 'id' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
-            >ID {% if sort == 'id' %}<i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i
-            >{% endif %}</a
-          >
-        </th>
-        <th>
-          <a
-            href="?sort=brand&order={% if sort == 'brand' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
-            >Marca {% if sort == 'brand' %}<i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i
-            >{% endif %}</a
-          >
-        </th>
-        <th>
-          <a
-            href="?sort=model&order={% if sort == 'model' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
-            >Modelo {% if sort == 'model' %}<i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i
-            >{% endif %}</a
-          >
-        </th>
-        <th>
-          <a
-            href="?sort=year&order={% if sort == 'year' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
-            >Ano {% if sort == 'year' %}<i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i
-            >{% endif %}</a
-          >
-        </th>
-        <th>
-          <a
-            href="?sort=color&order={% if sort == 'color' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
-            >Cor {% if sort == 'color' %}<i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i
-            >{% endif %}</a
-          >
-        </th>
-        <th>
-          <a
-            href="?sort=vehicle_type&order={% if sort == 'vehicle_type' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
-            >Tipo {% if sort == 'vehicle_type' %}<i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i
-            >{% endif %}</a
-          >
-        </th>
-        <th>
-          <a
-            href="?sort=plate&order={% if sort == 'plate' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
-            >Placa {% if sort == 'plate' %}<i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i
-            >{% endif %}</a
-          >
-        </th>
-        <th>
-          <a
-            href="?sort=km&order={% if sort == 'km' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
-            >Km {% if sort == 'km' %}<i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i
-            >{% endif %}</a
-          >
-        </th>
-        <th>
-          <a
-            href="?sort=vehicle_class&order={% if sort == 'vehicle_class' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
-            >Classe {% if sort == 'vehicle_class' %}<i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i
-            >{% endif %}</a
-          >
-        </th>
-        <th>
-          <a
-            href="?sort=status&order={% if sort == 'status' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}"
-            >Status {% if sort == 'status' %}<i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i
-            >{% endif %}</a
-          >
-        </th>
-        <th></th>
-      </tr>
-    </thead>
+<thead class="table-primary">
+  <tr>
+    <th>
+      <a href="?sort=id&order={% if sort == 'id' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}">
+        ID {% if sort == 'id' %}<i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}
+      </a>
+    </th>
+    <th>
+      <a href="?sort=brand&order={% if sort == 'brand' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}">
+        Marca {% if sort == 'brand' %}<i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}
+      </a>
+    </th>
+    <th>
+      <a href="?sort=model&order={% if sort == 'model' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}">
+        Modelo {% if sort == 'model' %}<i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}
+      </a>
+    </th>
+    <th>
+      <a href="?sort=plate&order={% if sort == 'plate' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}">
+        Placa {% if sort == 'plate' %}<i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}
+      </a>
+    </th>
+    <th>
+      <a href="?sort=vehicle_class__name&order={% if sort == 'vehicle_class__name' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}">
+        Classe {% if sort == 'vehicle_class__name' %}<i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}
+      </a>
+    </th>
+    <th>
+      <a href="?sort=status&order={% if sort == 'status' and order == 'asc' %}desc{% else %}asc{% endif %}&search={{ query|urlencode }}">
+        Status {% if sort == 'status' %}<i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>{% endif %}
+      </a>
+    </th>
+    <th></th>
+  </tr>
+</thead>
 
     <tbody>
       {% for vehicle in vehicles %}
       <tr>
         <td>{{ vehicle.id }}</td>
-        <td>{{ vehicle.brand | title }}</td>
-        <td>{{ vehicle.model | title }}</td>
-        <td>{{ vehicle.year }}</td>
-        <td>{{ vehicle.color | title }}</td>
-        <td>{{ vehicle.vehicle_type | title }}</td>
-        <td>{{ vehicle.plate | title }}</td>
-        <td>{{ vehicle.km }}</td>
-        <td>{{ vehicle.vehicle_class | title }}</td>
-        <td>{{ vehicle.get_status_display }}</td>
+        <td>{{ vehicle.brand|title }}</td>
+        <td>{{ vehicle.model }}</td>
+        <td>{{ vehicle.plate }}</td>
+        <td>{{ vehicle.vehicle_class.name }}</td>
+        <td>{{ vehicle.get_status_display|title }}</td>
         <td>
-          <a href="{% url 'vehicle_detail' vehicle.id %}" class="btn btn-sm">
+          <a href="{% url 'vehicle_detail' vehicle.id %}" class="btn btn-sm" title="Visualizar">
             <i class="bi bi-eye text-primary"></i>
           </a>
-          <a href="{% url 'update_vehicle' vehicle.id %}" class="btn btn-sm">
+          <a href="{% url 'update_vehicle' vehicle.id %}" class="btn btn-sm" title="Editar">
             <i class="bi bi-pencil-square text-primary"></i>
           </a>
-          <button
-            type="button"
-            class="btn btn-sm"
-            data-bs-toggle="modal"
-            data-bs-target="#deleteModal{{ vehicle.id }}"
-          >
+          <button type="button" class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ vehicle.id }}" title="Excluir">
             <i class="bi bi-trash text-danger"></i>
           </button>
 
-          <div
-            class="modal fade"
-            id="deleteModal{{ vehicle.id }}"
-            tabindex="-1"
-            aria-labelledby="deleteModalLabel{{ vehicle.id }}"
-            aria-hidden="true"
-          >
+          <div class="modal fade" id="deleteModal{{ vehicle.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ vehicle.id }}" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="deleteModalLabel{{ vehicle.id }}">
-                    Confirmar Exclusão
-                  </h5>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Fechar"
-                  ></button>
+                  <h5 class="modal-title" id="deleteModalLabel{{ vehicle.id }}">Confirmar Exclusão</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                  Tem certeza que deseja excluir o veículo
-                  <strong>{{ vehicle.brand }} {{ vehicle.model }}</strong>?
+                  Tem certeza que deseja excluir o veículo <strong>{{ vehicle.model }}</strong>?
                 </div>
                 <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancelar
-                  </button>
-                  <form
-                    method="post"
-                    action="{% url 'delete_vehicle' vehicle.id %}"
-                  >
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <form method="post" action="{% url 'delete_vehicle' vehicle.id %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">
-                      Excluir
-                    </button>
+                    <button type="submit" class="btn btn-danger">Excluir</button>
                   </form>
                 </div>
               </div>
@@ -252,53 +154,34 @@
           </div>
         </td>
       </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" class="text-center">Nenhum veículo encontrado.</td>
+      </tr>
       {% endfor %}
     </tbody>
   </table>
 
-  {% if vehicles.paginator.count == 0 %}
-  <div class="alert" role="alert">Nenhum veículo encontrado.</div>
-  {% endif %}
-
-  <nav aria-label="Paginacao">
+  <nav aria-label="Paginacao" class="mt-4">
     <ul class="pagination justify-content-center">
       {% if vehicles.has_previous %}
       <li class="page-item">
-        <a
-          class="page-link"
-          href="?page={{ vehicles.previous_page_number }}&sort={{ sort }}&order={{ order }}&search={{ query|urlencode }}"
-          aria-label="Anterior"
-        >
-          ‹
-        </a>
+        <a class="page-link" href="?page={{ vehicles.previous_page_number }}&sort={{ sort }}&order={{ order }}&search={{ query|urlencode }}" aria-label="Anterior">‹</a>
       </li>
       {% else %}
-      <li class="page-item disabled">
-        <span class="page-link" aria-label="Anterior">‹</span>
-      </li>
+      <li class="page-item disabled"><span class="page-link">‹</span></li>
       {% endif %}
 
-      <li class="page-item active">
-        <span class="page-link">{{ vehicles.number }}</span>
-      </li>
+      <li class="page-item active"><span class="page-link">{{ vehicles.number }}</span></li>
 
       {% if vehicles.has_next %}
       <li class="page-item">
-        <a
-          class="page-link"
-          href="?page={{ vehicles.next_page_number }}&sort={{ sort }}&order={{ order }}&search={{ query|urlencode }}"
-          aria-label="Próxima"
-        >
-          ›
-        </a>
+        <a class="page-link" href="?page={{ vehicles.next_page_number }}&sort={{ sort }}&order={{ order }}&search={{ query|urlencode }}" aria-label="Próxima">›</a>
       </li>
       {% else %}
-      <li class="page-item disabled">
-        <span class="page-link" aria-label="Próxima">›</span>
-      </li>
+      <li class="page-item disabled"><span class="page-link">›</span></li>
       {% endif %}
     </ul>
   </nav>
-
-  {% endblock %}
 </div>
+{% endblock %}

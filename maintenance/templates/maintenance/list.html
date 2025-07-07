@@ -1,36 +1,92 @@
 {% extends "base/base.html" %}
 {% block content %}
 <div class="container mt-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
-    <h3 class="text-primary">Manutenções</h3>
-    <form class="d-flex" method="get" action="">
-      <input type="text" name="q" class="form-control me-2" placeholder="Buscar por placa ou status" value="{{ request.GET.q }}">
-      <button class="btn btn-outline-primary me-2" type="submit">Buscar</button>
-      <a href="{% url 'list_vehicles' %}" class="btn btn-primary">Registrar</a>
-    </form>
-  </div>
+  <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
+    <h3 class="mb-0 me-3 text-primary">Manutenções</h3>
 
+    <div class="d-flex ms-auto align-items-center gap-2">
+     <form method="get" class="d-flex" style="min-width: 320px; max-width: 400px" action="">
+  <div class="position-relative w-100 me-2">
+    <input
+      class="form-control ps-5 rounded-pill"
+      type="search"
+      name="q"
+      value="{{ request.GET.q|default:'' }}"
+      placeholder="Placa ou status"
+      aria-label="Buscar"
+      style="min-width: 250px"
+    />
+    <span class="position-absolute top-50 start-0 translate-middle-y ps-3">
+      <i class="bi bi-search text-muted"></i>
+    </span>
+  </div>
+  <button class="btn btn-outline-primary" type="submit">Buscar</button>
+</form>
+
+
+      {% if request.GET.q %}
+      <a href="{% url 'maintenance_list' %}" class="btn btn-outline-secondary">Limpar</a>
+      {% endif %}
+
+      <a href="{% url 'create_maintenance' %}" class="btn btn-primary">Nova Manutenção</a>
+    </div>
+  </div>
 
   {% if messages %}
     {% for message in messages %}
-    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-      {{ message }}
-      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-    </div>
+      <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+      </div>
     {% endfor %}
   {% endif %}
 
-
-  <table class="table table-striped">
+  <table class="table table-striped align-middle">
     <thead class="table-primary">
       <tr>
-        <th>ID</th>
-        <th>Placa</th>
-        <th>Início</th>
-        <th>Previsão</th>
-        <th>Motivo</th>
-        <th>Status</th>
-        <th></th>
+        <th>
+          <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}sort=id&order={% if sort == 'id' and order == 'asc' %}desc{% else %}asc{% endif %}">
+            ID {% if sort == 'id' %}
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            {% endif %}
+          </a>
+        </th>
+        <th>
+          <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}sort=vehicle__plate&order={% if sort == 'vehicle__plate' and order == 'asc' %}desc{% else %}asc{% endif %}">
+            Veículo (Placa) {% if sort == 'vehicle__plate' %}
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            {% endif %}
+          </a>
+        </th>
+        <th>
+          <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}sort=start_date&order={% if sort == 'start_date' and order == 'asc' %}desc{% else %}asc{% endif %}">
+            Início {% if sort == 'start_date' %}
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            {% endif %}
+          </a>
+        </th>
+        <th>
+          <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}sort=expected_end_date&order={% if sort == 'expected_end_date' and order == 'asc' %}desc{% else %}asc{% endif %}">
+            Previsão {% if sort == 'expected_end_date' %}
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            {% endif %}
+          </a>
+        </th>
+        <th>
+          <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}sort=reason&order={% if sort == 'reason' and order == 'asc' %}desc{% else %}asc{% endif %}">
+            Motivo {% if sort == 'reason' %}
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            {% endif %}
+          </a>
+        </th>
+        <th>
+          <a href="?{% if request.GET.q %}q={{ request.GET.q|urlencode }}&{% endif %}sort=completed&order={% if sort == 'completed' and order == 'asc' %}desc{% else %}asc{% endif %}">
+            Status {% if sort == 'completed' %}
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            {% endif %}
+          </a>
+        </th>
+        <th scope="col"></th>
       </tr>
     </thead>
     <tbody>
@@ -43,20 +99,53 @@
         <td>{{ maintenance.reason }}</td>
         <td>
           {% if maintenance.completed %}
-            <span class="badge bg-success">Concluída</span>
+            Concluída
           {% else %}
-            <span class="badge bg-warning text-dark">Em andamento</span>
+            Em manutenção
           {% endif %}
         </td>
         <td>
+          <a href="{% url 'maintenance_detail' maintenance.id %}" class="btn btn-sm" title="Visualizar">
+            <i class="bi bi-eye text-primary"></i>
+          </a>
+          <a href="{% url 'maintenance_update' maintenance.id %}" class="btn btn-sm" title="Editar">
+            <i class="bi bi-pencil-square text-primary"></i>
+          </a>
           {% if not maintenance.completed %}
-            <a href="{% url 'complete_maintenance' maintenance.id %}" class="btn btn-sm btn-success"
-               onclick="return confirm('Tem certeza que deseja concluir esta manutenção?');">
-              Concluir
-            </a>
+          <a href="{% url 'maintenance_complete' maintenance.id %}" class="btn btn-sm" title="Finalizar"
+             onclick="return confirm('Tem certeza que deseja concluir esta manutenção?');">
+            <i class="bi bi-check-circle text-success"></i>
+          </a>
           {% else %}
-            <span class="text-success">✔</span>
+          <button class="btn btn-sm" disabled style="border:none; background:none; color:gray; cursor:not-allowed;" title="Manutenção concluída">
+            <i class="bi bi-check-circle-fill text-success"></i>
+          </button>
           {% endif %}
+          <button type="button" class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ maintenance.id }}" title="Excluir">
+            <i class="bi bi-trash text-danger"></i>
+          </button>
+
+          <div class="modal fade" id="deleteModal{{ maintenance.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ maintenance.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteModalLabel{{ maintenance.id }}">Confirmar Exclusão</h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                  Tem certeza que deseja excluir a manutenção do veículo <strong>{{ maintenance.vehicle.plate }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <form method="post" action="{% url 'maintenance_delete' maintenance.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Excluir</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
         </td>
       </tr>
       {% empty %}
@@ -66,5 +155,36 @@
       {% endfor %}
     </tbody>
   </table>
+
+  <nav aria-label="Paginação" class="mt-4">
+    <ul class="pagination justify-content-center">
+      {% if maintenances.has_previous %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ maintenances.previous_page_number }}&sort={{ sort }}&order={{ order }}&q={{ request.GET.q|urlencode }}" aria-label="Anterior">‹</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-label="Anterior">‹</span>
+      </li>
+      {% endif %}
+
+      <li class="page-item active">
+        <span class="page-link">{{ maintenances.number }}</span>
+      </li>
+
+      {% if maintenances.has_next %}
+      <li class="page-item">
+        <a class="page-link" href="?page={{ maintenances.next_page_number }}&sort={{ sort }}&order={{ order }}&q={{ request.GET.q|urlencode }}" aria-label="Próxima">›</a>
+      </li>
+      {% else %}
+      <li class="page-item disabled">
+        <span class="page-link" aria-label="Próxima">›</span>
+      </li>
+      {% endif %}
+    </ul>
+  </nav>
+
+  {% if maintenances.paginator.count == 0 %}
+  {% endif %}
 </div>
 {% endblock %}

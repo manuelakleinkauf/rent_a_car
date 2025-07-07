@@ -5,16 +5,16 @@ from django.db.models import Q
 from .models import Employee
 from .forms import EmployeeForm
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 
-
+@login_required
 def employee_list(request):
-    query = request.GET.get('q', '').strip()  # Busca por nome ou CPF
+    query = request.GET.get('q', '').strip()  
     employees = Employee.objects.all()
     sort = request.GET.get('sort', 'id')
     order = request.GET.get('order', 'asc')
 
     if query:
-        # Remove pontos, traços e espaços para buscar CPF sem formatação
         query_clean = re.sub(r'[\.\-\s]', '', query)
 
         employees = employees.filter(
@@ -33,7 +33,7 @@ def employee_list(request):
     count = Employee.objects.count()
     return render(request, 'employees/list.html', {'employees': employees, 'query': query, 'sort': sort, 'order': order, 'total': count, 'page_range': paginator.page_range})
 
-
+@login_required
 def employee_detail(request, id):
     employee = get_object_or_404(Employee, id=id)
     active_reservations = employee.reservations.filter(status='active')
@@ -44,53 +44,56 @@ def employee_detail(request, id):
         'has_active_reservations': has_active_reservations,
     })
 
-
+@login_required
 def employee_create(request):
     if request.method == 'POST':
         form = EmployeeForm(request.POST)
         if form.is_valid():
             form.save()
-            messages.success(request, "Funcionario cadastrado com sucesso.")
+            messages.success(request, "Funcionário cadastrado com sucesso.")
             return redirect('employee_list')
     else:
         form = EmployeeForm()
     return render(request, 'employees/form.html', {'form': form})
 
-
+@login_required
 def employee_update(request, id):
     employee = get_object_or_404(Employee, id=id)
     if request.method == 'POST':
         form = EmployeeForm(request.POST, instance=employee)
         if form.is_valid():
             form.save()
-            messages.success(request, "Funcionario atualizado com sucesso.")
+            messages.success(request, "Funcionário atualizado com sucesso.")
             return redirect('employee_list')
     else:
         form = EmployeeForm(instance=employee)
     return render(request, 'employees/update.html', {'form': form})
 
-
+@login_required
 def employee_delete(request, id):
     employee = get_object_or_404(Employee, id=id)
-    if employee.active:  # aqui verifica se está ativo
+    if employee.active:  
         messages.error(
-            request, "Não é possível excluir um funcionario ativo. Por favor, inative antes de excluir.")
+            request, "Não é possível excluir um funcionário ativo. Por favor, inative antes de excluir.")
     elif employee.reservations.filter(status='active').exists():
         messages.error(
-            request, "Não é possível excluir. Funcionario possui reservas ativas.")
+            request, "Não é possível excluir. Funcionário possui reservas ativas.")
     else:
         employee.delete()
-        messages.success(request, "Funcionario excluído com sucesso.")
+        messages.success(request, "Funcionário excluído com sucesso.")
     return redirect('employee_list')
 
-
-def employee_inactivate(request, id):
+@login_required
+def employee_toggle_active(request, id):
     employee = get_object_or_404(Employee, id=id)
     if employee.reservations.filter(status='active').exists():
         messages.error(
-            request, "Não é possível inativar. Funcionario possui reservas ativas.")
+            request, "Não é possível alterar o status. Funcionário possui reservas ativas.")
     else:
-        employee.active = False
+        employee.active = not employee.active  # Toggle
         employee.save()
-        messages.success(request, "Funcionario inativado com sucesso.")
+        status = "ativado" if employee.active else "inativado"
+        messages.success(request, f"Funcionário {status} com sucesso.")
     return redirect('employee_list')
+
+

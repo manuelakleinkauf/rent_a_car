@@ -6,7 +6,7 @@ STATUS_CHOICES = [
 ('retornado', 'Retornado'),
 ('cancelado', 'Cancelado'),
 ]
-# Create your models here.
+
 class Reservation(models.Model):
     STATUS_CHOICES = [
         ('active', 'Ativo'),
@@ -30,6 +30,7 @@ class Reservation(models.Model):
     client = models.ForeignKey(
         'client.Client',
         on_delete=models.PROTECT,
+        related_name='reservations',
     )
 
     #retirada

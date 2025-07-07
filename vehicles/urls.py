@@ -15,4 +15,4 @@ urlpatterns = [
     path('listar-classe/', views.list_vehicle_classes, name='list_vehicle_classes'),
     path('atualizar-classe/<int:vehicle_class_id>/', views.update_vehicle_class, name='update_vehicle_class'),
     path('deletar-classe/<int:vehicle_class_id>/', views.delete_vehicle_class, name='delete_vehicle_class'),
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]

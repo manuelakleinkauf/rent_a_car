@@ -50,7 +50,10 @@
   </head>
   <body>
     <div class="sidebar d-flex flex-column p-3">
-      <a href="{% url 'index' %}" class="d-flex align-items-center mb-3 text-decoration-none">
+      <a
+        href="{% url 'index' %}"
+        class="d-flex align-items-center mb-3 text-decoration-none"
+      >
         <i class="bi bi-car-front-fill me-2" style="font-size: 1.5rem"></i>
         <span class="fs-4">Rent a Car</span>
       </a>
@@ -83,21 +86,35 @@
         </li>
         <li>
           <a
-            class="nav-link"
+            class="nav-link d-flex justify-content-between align-items-center"
             data-bs-toggle="collapse"
             href="#reportCollapse"
             role="button"
             aria-expanded="false"
             aria-controls="reportCollapse"
           >
-            <i class="bi bi-bar-chart-fill me-2"></i> Relatórios
+            <span><i class="bi bi-bar-chart-fill me-2"></i> Relatórios</span>
+            <i class="bi bi-chevron-down"></i>
           </a>
           <div class="collapse" id="reportCollapse">
-            <ul class="btn-toggle
--nav list-unstyled fw-normal small ps-4">
+            <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
               <li>
                 <a href="{% url 'report_index' %}" class="nav-link">
                   Relatório Geral
+                </a>
+              </li>
+            </ul>
+            <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
+              <li>
+                <a href="{% url 'client_historic_report' %}" class="nav-link">
+                  Relatório de Clientes
+                </a>
+              </li>
+            </ul>
+            <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
+              <li>
+                <a href="{% url 'vehicle_historic_report' %}" class="nav-link">
+                  Relatório de Veículos
                 </a>
               </li>
             </ul>
@@ -105,20 +122,21 @@
         </li>
         <li>
           <a href="{% url 'maintenance_list' %}" class="nav-link">
-            <i class="bi bi-tools me-2"></i> Manutenção
+            <i class="bi bi-tools me-2"></i> Manutenções
           </a>
         </li>
         <hr />
         <li>
           <a
-            class="nav-link"
+            class="nav-link d-flex justify-content-between align-items-center"
             data-bs-toggle="collapse"
             href="#configCollapse"
             role="button"
             aria-expanded="false"
             aria-controls="configCollapse"
           >
-            <i class="bi bi-gear-fill me-2"></i> Configurações
+            <span><i class="bi bi-gear-fill me-2"></i> Configurações</span>
+            <i class="bi bi-chevron-down"></i>
           </a>
           <div class="collapse" id="configCollapse">
             <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
@@ -128,10 +146,28 @@
                 </a>
               </li>
             </ul>
+            <ul class="btn-toggle-nav list-unstyled fw-normal small ps-4">
+              <li>
+                <a href="{% url 'create_user' %}" class="nav-link">
+                  Criar usuário
+                </a>
+              </li>
+            </ul>
           </div>
         </li>
-      </ul>      
+      </ul>
+      {% if user.is_authenticated %}
+  <div class="mt-auto">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a href="{% url 'logout' %}" class="nav-link">
+          <i class="bi bi-box-arrow-right me-2"></i> Sair
+        </a>
       </li>
+    </ul>
+  </div>
+{% endif %}
+
     </div>
 
     <main class="content">{% block content %}{% endblock %}</main>

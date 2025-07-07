@@ -8,7 +8,6 @@ POSITIONS_CHOICES = (
     ('seller', 'Vendedor')
 )
 
-
 class Employee(models.Model):
     name = models.CharField(max_length=255, verbose_name="Nome")
     cpf = models.CharField(max_length=11, unique=True, verbose_name="CPF")
@@ -20,18 +19,8 @@ class Employee(models.Model):
         max_length=20, choices=POSITIONS_CHOICES, default='')
 
     class Meta:
-        verbose_name = "Funcionario"
-        verbose_name_plural = "Funcionarios"
-
-    def clean(self):
-        # Valida CPF só com dígitos e tamanho 11
-        if not self.cpf.isdigit() or len(self.cpf) != 11:
-            raise ValidationError(
-                "CPF inválido. Deve conter exatamente 11 dígitos.")
-        # Valida telefone só com dígitos e tamanho 11
-        if not self.phone.isdigit() or len(self.phone) != 11:
-            raise ValidationError(
-                "Telefone deve conter 11 dígitos, incluindo DDD.")
+        verbose_name = "Funcionário"
+        verbose_name_plural = "Funcionários"
 
     def save(self, *args, **kwargs):
         self.full_clean()
@@ -48,25 +37,23 @@ class Employee(models.Model):
     def deactivate(self):
         if self.has_active_reservations():
             raise ValidationError(
-                "Funcionario possui reservas ativas e não pode ser inativado.")
+                "Funcionário possui reservas ativas e não pode ser inativado.")
         self.active = False
         self.save()
 
     @property
     def cpf_formatado(self):
-        # Formata o CPF como 123.456.789-00
         cpf = self.cpf
         return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
 
     @property
     def phone_formatado(self):
-        # Supondo que phone tem 11 dígitos: DDD + número (ex: 51976328951)
         if len(self.phone) == 11:
             ddd = self.phone[:2]
             parte1 = self.phone[2:7]
             parte2 = self.phone[7:]
             return f"({ddd}) {parte1}-{parte2}"
-        return self.phone  # se não tiver 11 dígitos, retorna como está
+        return self.phone  
 
 
 class Reservation(models.Model):

@@ -4,7 +4,7 @@ from .models import Reservation
 class ReservationForm(forms.ModelForm):
     class Meta:
         model = Reservation
-        fields = ['status', 'start_date', 'end_date', 'vehicle', 'client']
+        fields = ['client', 'vehicle', 'start_date', 'end_date', 'status' ]
         labels = {
             'status': 'Status',
             'start_date': 'Data de Início',
@@ -21,9 +21,9 @@ class ReservationForm(forms.ModelForm):
                 attrs={'type': 'date', 'class': 'form-control'},
                 format='%Y-%m-%d'
             ),
-            'status': forms.Select(attrs={'class': 'form-control'}),
             'vehicle': forms.Select(attrs={'class': 'form-control'}),
             'client': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control no-arrow'}),
         }
 
     def __init__(self, *args, **kwargs):

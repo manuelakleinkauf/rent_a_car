@@ -1,0 +1,113 @@
+{% extends "base/base.html" %}
+{% block content %}
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+      <div class="card shadow">
+        <div class="card-header bg-primary text-white text-center">
+          <h3 class="mb-0">Atualização de Manutenção</h3>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+
+            <div class="mb-3">
+              {{ form.vehicle.label_tag }}
+              {{ form.vehicle }}
+              {{ form.vehicle.errors }}
+            </div>
+
+             <div class="mb-3">
+              {{ form.status.label_tag }}
+              {{ form.status }}
+              {{ form.status.errors }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.reason.label_tag }}
+              {{ form.reason }}
+              {{ form.reason.errors }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.start_date.label_tag }}
+              {{ form.start_date }}
+              {{ form.start_date.errors }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.expected_end_date.label_tag }}
+              {{ form.expected_end_date }}
+              {{ form.expected_end_date.errors }}
+            </div>
+
+            <div class="form-check form-switch mb-3">
+              {{ form.completed }}
+              {{ form.completed.label_tag }}
+              {{ form.completed.errors }}
+            </div>
+
+            <div class="mb-3">
+              {{ form.notes.label_tag }}
+              {{ form.notes }}
+              {{ form.notes.errors }}
+            </div>
+            
+            <div class="d-flex justify-content-end gap-2 mt-4">
+              <a href="{% url 'maintenance_list' %}" class="btn btn-secondary d-flex align-items-center">
+                <i class="bi bi-x-circle me-2"></i> Cancelar
+              </a>
+              <button type="submit" class="btn btn-primary d-flex align-items-center">
+                <i class="bi bi-arrow-repeat me-2"></i> Atualizar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+input, textarea, select {
+  width: 100%;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: #3b82f6;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+}
+
+textarea {
+  height: 38px;
+  resize: none;
+  padding: 8px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background-color: #fff;
+  font-size: 1rem;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.form-check input[type="checkbox"] {
+  width: auto;
+  margin: 0;
+}
+</style>
+{% endblock %}

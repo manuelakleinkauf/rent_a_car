@@ -1,5 +1,8 @@
 from django import forms
+from django.core.exceptions import ValidationError
+from reservation.models import Reservation
 from .models import Client
+from vehicles.models import Vehicle
 
 class ClientForm(forms.ModelForm):
     class Meta:
@@ -7,11 +10,11 @@ class ClientForm(forms.ModelForm):
         fields = ['name', 'cpf', 'email', 'phone', 'address', 'active']
         widgets = {
             'address': forms.Textarea(attrs={
-                'rows': 2,               # altura menor
-                'style': 'resize:none;', # não deixa redimensionar
-                'class': 'form-control', # para estilo Bootstrap (se usar)
+                'rows': 2,               
+                'style': 'resize:none;',
+                'class': 'form-control', 
             }),
-            # Opcional: já define classes Bootstrap para outros campos
+          
             'name': forms.TextInput(attrs={'class': 'form-control'}),
             'cpf': forms.TextInput(attrs={'class': 'form-control'}),
             'email': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -21,7 +24,7 @@ class ClientForm(forms.ModelForm):
 
     def clean_cpf(self):
         cpf = self.cleaned_data['cpf']
-        cpf = ''.join(filter(str.isdigit, cpf))  # Remove qualquer caractere não numérico
+        cpf = ''.join(filter(str.isdigit, cpf))  
         if len(cpf) != 11:
             raise forms.ValidationError("CPF inválido. Deve conter 11 dígitos.")
         if Client.objects.exclude(id=self.instance.id).filter(cpf=cpf).exists():
@@ -30,10 +33,26 @@ class ClientForm(forms.ModelForm):
 
     def clean_phone(self):
         phone = self.cleaned_data['phone']
-        phone = ''.join(filter(str.isdigit, phone))  # Remove qualquer caractere não numérico
+        phone = ''.join(filter(str.isdigit, phone)) 
         if len(phone) != 11:
             raise forms.ValidationError("Telefone deve conter 11 dígitos, incluindo DDD.")
         return phone
+    
+    def clean(self):
+        cleaned_data = super().clean()
+        active = cleaned_data.get('active')
+
+        # Só faz a validação se o cliente estiver tentando ficar inativo
+        if active is False and self.instance.pk:
+            # Verifica se o cliente tem reservas ativas
+            has_active_reservations = Reservation.objects.filter(client=self.instance).exists()
+            # Ou se o cliente tem algum veículo alugado (ajuste conforme seu modelo)
+            has_rented_vehicles = Vehicle.objects.filter(client=self.instance, status='rented').exists()
+
+            if has_active_reservations or has_rented_vehicles:
+                raise ValidationError("Cliente não pode ser inativado pois possui reservas ou veículos alugados.")
+
+        return cleaned_data
 
 
 

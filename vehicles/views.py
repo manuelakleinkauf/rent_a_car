@@ -6,8 +6,10 @@ from .models import Vehicle, VehicleClass
 from django.contrib import messages
 from django.core.paginator import Paginator
 from django.db.models import Q
-# Create your views here.
+from django.db.models import ProtectedError
+from django.contrib.auth.decorators import login_required
 
+@login_required
 def create_vehicle(request):
     if request.method == 'POST':
         form = VehicleForm(request.POST, request.FILES)
@@ -22,6 +24,7 @@ def create_vehicle(request):
     }
     return render(request, 'vehicles/create_vehicle.html', dados)
 
+@login_required
 def index(request):
     query = request.GET.get('search', '')
     sort = request.GET.get('sort', 'id')
@@ -56,6 +59,7 @@ def index(request):
     return render(request, 'vehicles/index.html', dados)
 
 
+@login_required
 def list_vehicles(request):
     query = request.GET.get('search', '')
     sort = request.GET.get('sort', 'id')
@@ -99,6 +103,7 @@ def list_vehicles(request):
     return render(request, 'vehicles/list_vehicles.html', dados)
 
 
+@login_required
 def get_vehicle_by_id(request, vehicle_id):
     vehicle = get_object_or_404(Vehicle, id=vehicle_id)
     dados = {
@@ -106,6 +111,7 @@ def get_vehicle_by_id(request, vehicle_id):
     }
     return render(request, 'vehicles/vehicle_detail.html', dados)
 
+@login_required
 def update_vehicle(request, vehicle_id):
     vehicle = Vehicle.objects.get(id=vehicle_id)
     if request.method == 'POST':
@@ -121,15 +127,7 @@ def update_vehicle(request, vehicle_id):
     }
     return render(request, 'vehicles/update_vehicle.html', dados)
 
-def delete_vehicle(request, vehicle_id):
-    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
-    if vehicle.status == 'rented':
-        messages.error(request, 'Veículo alugado não pode ser deletado!')
-        return redirect('list_vehicles')
-    vehicle.delete()
-    messages.success(request, 'Veículo deletado com sucesso!')
-    return redirect('list_vehicles')
-
+@login_required
 def create_vehicle_class(request):
     if request.method == 'POST':
         form = VehicleClassForm(request.POST)
@@ -144,6 +142,7 @@ def create_vehicle_class(request):
     }
     return render(request, 'vehicle_class/create_vehicle_class.html', dados)
 
+@login_required
 def update_vehicle_class(request, vehicle_class_id):
     vehicle_class = VehicleClass.objects.get(id=vehicle_class_id)
     if request.method == 'POST':
@@ -159,6 +158,7 @@ def update_vehicle_class(request, vehicle_class_id):
     }
     return render(request, 'vehicle_class/update_vehicle_class.html', dados)
 
+@login_required
 def list_vehicle_classes(request):
     query = request.GET.get('search', '')
     sort = request.GET.get('sort', 'id') 
@@ -184,7 +184,8 @@ def list_vehicle_classes(request):
         'order': request.GET.get('order', 'asc'),
     }
     return render(request, 'vehicle_class/list_vehicle_classes.html', dados)
-    
+
+@login_required   
 def delete_vehicle_class(request, vehicle_class_id):
     vehicle_class = get_object_or_404(VehicleClass, id=vehicle_class_id)
     if vehicle_class.vehicle_set.exists():
@@ -193,4 +194,24 @@ def delete_vehicle_class(request, vehicle_class_id):
     vehicle_class.delete()
     messages.success(request, 'Classe de veículo deletada com sucesso!')
     return redirect('list_vehicle_classes')
+
+@login_required
+def delete_vehicle(request, vehicle_id):
+    vehicle = get_object_or_404(Vehicle, id=vehicle_id)
+    
+    if vehicle.status == 'rented':
+        messages.error(request, 'Veículo alugado não pode ser deletado!')
+        return redirect('list_vehicles')
+
+    if vehicle.status == 'maintenance':
+        messages.error(request, 'Veículo em manutenção não pode ser deletado!')
+        return redirect('list_vehicles')
+
+    try:
+        vehicle.delete()
+        messages.success(request, 'Veículo deletado com sucesso!')
+    except ProtectedError:
+        messages.error(request, 'Veículo reservado não pode ser deletado!')
+    
+    return redirect('list_vehicles')
 

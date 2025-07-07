@@ -1,19 +1,32 @@
-{% extends "base/base.html" %} {% block content %}
+{% extends "base/base.html" %}
+{% block content %}
 <div class="container mt-4">
   <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
     <h3 class="mb-0 me-3 text-primary">Clientes</h3>
 
     <div class="d-flex ms-auto align-items-center gap-2">
-      <form method="get" class="d-flex" style="min-width: 320px; max-width: 400px">
-        <input
-          class="form-control me-2"
-          type="search"
-          name="q"
-          value="{{ query|default:'' }}"
-          placeholder="Buscar por nome ou CPF"
-          aria-label="Buscar"
-          style="min-width: 250px"
-        />
+      <form
+        method="get"
+        class="d-flex position-relative"
+        style="min-width: 320px; max-width: 400px"
+      >
+        <div class="position-relative w-100 me-2">
+          <input
+            class="form-control ps-5 rounded-pill"
+            type="search"
+            name="q"
+            value="{{ query|default:'' }}"
+            placeholder="Nome ou CPF"
+            aria-label="Buscar"
+            style="min-width: 250px"
+          />
+          <span
+            class="position-absolute top-50 start-0 translate-middle-y ps-3"
+          >
+            <i class="bi bi-search text-muted"></i>
+          </span>
+        </div>
+
         <button class="btn btn-outline-primary" type="submit">Buscar</button>
       </form>
 
@@ -27,10 +40,18 @@
 
   {% if messages %}
     {% for message in messages %}
-      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
-        {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
-      </div>
+    <div
+      class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+      role="alert"
+    >
+      {{ message }}
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="alert"
+        aria-label="Fechar"
+      ></button>
+    </div>
     {% endfor %}
   {% endif %}
 
@@ -40,42 +61,42 @@
         <th>
           <a href="?sort=id&order={% if sort == 'id' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             ID {% if sort == 'id' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
           <a href="?sort=name&order={% if sort == 'name' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             Nome {% if sort == 'name' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
           <a href="?sort=cpf&order={% if sort == 'cpf' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             CPF {% if sort == 'cpf' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
           <a href="?sort=email&order={% if sort == 'email' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             E-mail {% if sort == 'email' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
           <a href="?sort=phone&order={% if sort == 'phone' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             Telefone {% if sort == 'phone' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
           <a href="?sort=active&order={% if sort == 'active' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             Status {% if sort == 'active' %}
-              <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
@@ -90,13 +111,7 @@
         <td>{{ client.cpf_formatado }}</td>
         <td>{{ client.email }}</td>
         <td>{{ client.phone_formatado }}</td>
-        <td>
-          {% if client.active %}
-          <span class="badge bg-success">Ativo</span>
-          {% else %}
-          <span class="badge bg-secondary">Inativo</span>
-          {% endif %}
-        </td>
+        <td>{% if client.active %} Ativo {% else %} Inativo {% endif %}</td>
         <td>
           <a href="{% url 'client_detail' client.id %}" class="btn btn-sm" title="Visualizar">
             <i class="bi bi-eye text-primary"></i>
@@ -104,33 +119,68 @@
           <a href="{% url 'client_update' client.id %}" class="btn btn-sm" title="Editar">
             <i class="bi bi-pencil-square text-primary"></i>
           </a>
-          {% if client.active %}
-          <a href="{% url 'client_inactivate' client.id %}" class="btn btn-sm" title="Inativar" onclick="return confirm('Tem certeza que deseja inativar este cliente?');">
-            <i class="bi bi-person-x text-secondary"></i>
+
+          <!-- Botão de ativar/inativar -->
+          <a
+            href="{% url 'client_toggle_active' client.id %}"
+            class="btn btn-sm"
+            title="{% if client.active %}Inativar Cliente{% else %}Ativar Cliente{% endif %}"
+            onclick="return confirm('Tem certeza que deseja {% if client.active %}inativar{% else %}ativar{% endif %} o cliente {{ client.name|title }}?');"
+            style="border: none; background: none"
+          >
+            {% if client.active %}
+              <i class="bi bi-person-x text-secondary"></i>
+            {% else %}
+              <i class="bi bi-person-check text-success"></i>
+            {% endif %}
           </a>
-          {% else %}
-          <button class="btn btn-sm" title="Cliente já inativo" disabled style="border: none; background: none; color: gray; cursor: not-allowed;">
-            <i class="bi bi-person-x"></i>
-          </button>
-          {% endif %}
-          <button type="button" class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ client.id }}" title="Excluir">
+
+          <button
+            type="button"
+            class="btn btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteModal{{ client.id }}"
+            title="Excluir"
+          >
             <i class="bi bi-trash text-danger"></i>
           </button>
-          <div class="modal fade" id="deleteModal{{ client.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ client.id }}" aria-hidden="true">
+          <div
+            class="modal fade"
+            id="deleteModal{{ client.id }}"
+            tabindex="-1"
+            aria-labelledby="deleteModalLabel{{ client.id }}"
+            aria-hidden="true"
+          >
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="deleteModalLabel{{ client.id }}">Confirmar Exclusão</h5>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                  <h5 class="modal-title" id="deleteModalLabel{{ client.id }}">
+                    Confirmar Exclusão
+                  </h5>
+                  <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Fechar"
+                  ></button>
                 </div>
                 <div class="modal-body">
-                  Tem certeza que deseja excluir o cliente <strong>{{ client.name|title }}</strong>?
+                  Tem certeza que deseja excluir o cliente
+                  <strong>{{ client.name|title }}</strong>?
                 </div>
                 <div class="modal-footer">
-                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                  >
+                    Cancelar
+                  </button>
                   <form method="post" action="{% url 'client_delete' client.id %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">Excluir</button>
+                    <button type="submit" class="btn btn-danger">
+                      Excluir
+                    </button>
                   </form>
                 </div>
               </div>
@@ -150,7 +200,12 @@
     <ul class="pagination justify-content-center">
       {% if clients.has_previous %}
       <li class="page-item">
-        <a class="page-link" href="?page={{ clients.previous_page_number }}&sort={{ sort }}&order={{ order }}&q={{ query|urlencode }}" aria-label="Anterior">‹</a>
+        <a
+          class="page-link"
+          href="?page={{ clients.previous_page_number }}&sort={{ sort }}&order={{ order }}&q={{ query|urlencode }}"
+          aria-label="Anterior"
+          >‹</a
+        >
       </li>
       {% else %}
       <li class="page-item disabled">
@@ -164,7 +219,12 @@
 
       {% if clients.has_next %}
       <li class="page-item">
-        <a class="page-link" href="?page={{ clients.next_page_number }}&sort={{ sort }}&order={{ order }}&q={{ query|urlencode }}" aria-label="Próxima">›</a>
+        <a
+          class="page-link"
+          href="?page={{ clients.next_page_number }}&sort={{ sort }}&order={{ order }}&q={{ query|urlencode }}"
+          aria-label="Próxima"
+          >›</a
+        >
       </li>
       {% else %}
       <li class="page-item disabled">
@@ -174,8 +234,6 @@
     </ul>
   </nav>
 
-  {% if clients.paginator.count == 0 %}
-  <div class="alert alert-info" role="alert">Nenhum cliente encontrado.</div>
-  {% endif %}
+  {% if clients.paginator.count == 0 %} {% endif %}
 </div>
 {% endblock %}
