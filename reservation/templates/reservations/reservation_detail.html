@@ -27,7 +27,7 @@
                 type="text"
                 class="form-control"
                 id="vehicle"
-                value="{{ reservation.vehicle }}"
+                value="{{ reservation.vehicle|title }}"
                 disabled
               />
             </div>
@@ -80,16 +80,6 @@
                 class="form-control"
                 id="created_at"
                 value="{{ reservation.created_at }}"
-                disabled
-              />
-            </div>
-            <div class="form-group mb-3">
-              <label for="updated_at">Atualizado em</label>
-              <input
-                type="text"
-                class="form-control"
-                id="updated_at"
-                value="{{ reservation.updated_at }}"
                 disabled
               />
             </div>

@@ -1,4 +1,5 @@
-{% extends "base/base.html" %} {% block content %}
+{% extends "base/base.html" %}
+{% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
@@ -8,7 +9,20 @@
         </div>
         <div class="card-body">
           <form method="post" enctype="multipart/form-data">
-            {% csrf_token %} {{ form.as_p }}
+            {% csrf_token %}
+
+            {% for field in form %}
+              <div class="form-group mb-4">
+                <label for="{{ field.id_for_label }}">
+                  {{ field.label }}:
+                  {% if field.field.required %}
+                    <span class="text-danger">*</span>
+                  {% endif %}
+                </label>
+                {{ field }}
+                {{ field.errors }}
+              </div>
+            {% endfor %}
 
             <div class="d-flex justify-content-end gap-2 mt-4">
               <a
@@ -30,4 +44,18 @@
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const selectStatus = document.querySelector('select[name="status"]');
+    if (selectStatus) {
+      for (let option of selectStatus.options) {
+        if (option.value === 'maintenance') {
+          option.disabled = true;
+          option.style.color = 'gray';
+        }
+      }
+    }
+  });
+</script>
 {% endblock %}

@@ -23,6 +23,7 @@ class ReservationForm(forms.ModelForm):
             ),
             'vehicle': forms.Select(attrs={'class': 'form-control'}),
             'client': forms.Select(attrs={'class': 'form-control'}),
+            'status': forms.Select(attrs={'class': 'form-control no-arrow'}),
         }
 
     def __init__(self, *args, **kwargs):

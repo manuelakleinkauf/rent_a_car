@@ -7,5 +7,5 @@ urlpatterns = [
     path('<int:id>/', views.client_detail, name='client_detail'),
     path('<int:id>/editar_cliente/', views.client_update, name='client_update'),
     path('<int:id>/excluir_cliente/', views.client_delete, name='client_delete'),
-    path('<int:id>/inativar_cliente/', views.client_inactivate, name='client_inactivate'),
+    path('<int:id>/toggle_active/', views.client_toggle_active, name='client_toggle_active'),
 ]

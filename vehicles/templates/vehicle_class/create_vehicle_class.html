@@ -18,6 +18,12 @@
   .money-input-wrapper input {
     padding-left: 30px !important; /* espaço pro R$ */
   }
+
+  /* Asterisco vermelho nos labels obrigatórios */
+  .label-required::after {
+    content: " *";
+    color: red;
+  }
 </style>
 
 <div class="container mt-5">
@@ -32,17 +38,21 @@
             {% csrf_token %}
 
             <div class="mb-3">
-              <label for="{{ form.name.id_for_label }}" class="form-label">Nome da Classe:</label>
+              <label for="{{ form.name.id_for_label }}" class="form-label label-required">
+                Nome da Classe:
+              </label>
               {{ form.name }}
             </div>
 
-            <div class="mb-3">
+           <div class="mb-3">
               <label for="{{ form.description.id_for_label }}" class="form-label">Descrição:</label>
               {{ form.description }}
             </div>
 
             <div class="mb-3">
-              <label for="{{ form.daily_price.id_for_label }}" class="form-label">Preço Diário:</label>
+              <label for="{{ form.daily_price.id_for_label }}" class="form-label label-required">
+                Preço Diário:
+              </label>
               <div class="money-input-wrapper">
                 <span class="money-symbol">R$</span>
                 {{ form.daily_price }}
@@ -76,6 +86,4 @@
   </div>
 </div>
 
-
 {% endblock %}
-

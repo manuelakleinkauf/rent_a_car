@@ -1,14 +1,11 @@
-{% extends "base/base.html" %} {% block content %}
+{% extends "base/base.html" %}
+{% block content %}
 <div class="container mt-4">
   <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap">
     <h3 class="mb-0 me-3 text-primary">Funcionários</h3>
 
     <div class="d-flex ms-auto align-items-center gap-2">
-      <form
-        method="get"
-        class="d-flex"
-        style="min-width: 320px; max-width: 400px"
-      >
+      <form method="get" class="d-flex" style="min-width: 320px; max-width: 400px">
         <div class="position-relative w-100 me-2">
           <input
             class="form-control ps-5 rounded-pill"
@@ -19,9 +16,7 @@
             aria-label="Buscar"
             style="min-width: 250px"
           />
-          <span
-            class="position-absolute top-50 start-0 translate-middle-y ps-3"
-          >
+          <span class="position-absolute top-50 start-0 translate-middle-y ps-3">
             <i class="bi bi-search text-muted"></i>
           </span>
         </div>
@@ -30,109 +25,79 @@
       </form>
 
       {% if query %}
-      <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary"
-        >Limpar</a
-      >
+      <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary">Limpar</a>
       {% endif %}
 
-      <a href="{% url 'employee_create' %}" class="btn btn-primary"
-        >Novo Funcionário</a
-      >
+      <a href="{% url 'employee_create' %}" class="btn btn-primary">Novo Funcionário</a>
     </div>
   </div>
 
-  {% if messages %} {% for message in messages %}
-  <div
-    class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
-    role="alert"
-  >
-    {{ message }}
-    <button
-      type="button"
-      class="btn-close"
-      data-bs-dismiss="alert"
-      aria-label="Fechar"
-    ></button>
-  </div>
-  {% endfor %} {% endif %}
+  {% if messages %}
+    {% for message in messages %}
+      <div
+        class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+        role="alert"
+      >
+        {{ message }}
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Fechar"
+        ></button>
+      </div>
+    {% endfor %}
+  {% endif %}
 
   <table class="table table-striped">
     <thead class="table-primary">
       <tr>
         <th>
-          <a
-            href="?sort=id&order={% if sort == 'id' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
-          >
+          <a href="?sort=id&order={% if sort == 'id' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             ID {% if sort == 'id' %}
-            <i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
-          <a
-            href="?sort=name&order={% if sort == 'name' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
-          >
+          <a href="?sort=name&order={% if sort == 'name' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             Nome {% if sort == 'name' %}
-            <i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
-          <a
-            href="?sort=cpf&order={% if sort == 'cpf' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
-          >
+          <a href="?sort=cpf&order={% if sort == 'cpf' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             CPF {% if sort == 'cpf' %}
-            <i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
-          <a
-            href="?sort=email&order={% if sort == 'email' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
-          >
+          <a href="?sort=email&order={% if sort == 'email' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             E-mail {% if sort == 'email' %}
-            <i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
-          <a
-            href="?sort=phone&order={% if sort == 'phone' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
-          >
+          <a href="?sort=phone&order={% if sort == 'phone' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             Telefone {% if sort == 'phone' %}
-            <i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
-          <a
-            href="?sort=position&order={% if sort == 'position' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
-          >
+          <a href="?sort=position&order={% if sort == 'position' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             Cargo {% if sort == 'position' %}
-            <i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
         <th>
-          <a
-            href="?sort=active&order={% if sort == 'active' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}"
-          >
+          <a href="?sort=active&order={% if sort == 'active' and order == 'asc' %}desc{% else %}asc{% endif %}&q={{ query|urlencode }}">
             Status {% if sort == 'active' %}
-            <i
-              class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"
-            ></i>
+            <i class="bi bi-caret-{% if order == 'asc' %}up{% else %}down{% endif %}-fill"></i>
             {% endif %}
           </a>
         </th>
@@ -150,96 +115,72 @@
         <td>{{ employee.get_position_display }}</td>
         <td>{% if employee.active %} Ativo {% else %} Inativo {% endif %}</td>
         <td>
-          <a
-            href="{% url 'employee_detail' employee.id %}"
-            class="btn btn-sm"
-            title="Visualizar"
-          >
+          <a href="{% url 'employee_detail' employee.id %}" class="btn btn-sm" title="Visualizar">
             <i class="bi bi-eye text-primary"></i>
           </a>
-          <a
-            href="{% url 'employee_update' employee.id %}"
-            class="btn btn-sm"
-            title="Editar"
-          >
+          <a href="{% url 'employee_update' employee.id %}" class="btn btn-sm" title="Editar">
             <i class="bi bi-pencil-square text-primary"></i>
           </a>
 
           {% if employee.active %}
+          <!-- Botão para Inativar -->
           <button
             type="button"
             data-bs-toggle="modal"
-            data-bs-target="#inactivateModal{{ employee.id }}"
+            data-bs-target="#toggleActiveModal{{ employee.id }}"
             class="btn btn-sm"
             title="Inativar Funcionário"
             style="border: none; background: none"
           >
             <i class="bi bi-person-x text-secondary"></i>
           </button>
+          {% else %}
+          <!-- Botão para Ativar -->
+          <button
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#toggleActiveModal{{ employee.id }}"
+            class="btn btn-sm"
+            title="Ativar Funcionário"
+            style="border: none; background: none; color: green;"
+          >
+            <i class="bi bi-person-check"></i>
+          </button>
+          {% endif %}
 
+          <!-- Modal para ativar/inativar -->
           <div
             class="modal fade"
-            id="inactivateModal{{ employee.id }}"
+            id="toggleActiveModal{{ employee.id }}"
             tabindex="-1"
-            aria-labelledby="inactivateModalLabel{{ employee.id }}"
+            aria-labelledby="toggleActiveModalLabel{{ employee.id }}"
             aria-hidden="true"
           >
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5
-                    class="modal-title"
-                    id="inactivateModalLabel{{ employee.id }}"
-                  >
-                    Confirmar Inativação
+                  <h5 class="modal-title" id="toggleActiveModalLabel{{ employee.id }}">
+                    Confirmar {% if employee.active %}Inativação{% else %}Ativação{% endif %}
                   </h5>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Fechar"
-                  ></button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                  Tem certeza que deseja inativar o funcionário
-                  <strong>{{ employee.name|title }}</strong>?
+                  Tem certeza que deseja
+                  {% if employee.active %}inativar{% else %}ativar{% endif %}
+                  o funcionário <strong>{{ employee.name|title }}</strong>?
                 </div>
                 <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancelar
-                  </button>
-                  <form
-                    method="post"
-                    action="{% url 'employee_inactivate' employee.id %}"
-                  >
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <form method="post" action="{% url 'employee_toggle_active' employee.id %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">
-                      Inativar
+                    <button type="submit" class="btn {% if employee.active %}btn-danger{% else %}btn-success{% endif %}">
+                      {% if employee.active %}Inativar{% else %}Ativar{% endif %}
                     </button>
                   </form>
                 </div>
               </div>
             </div>
           </div>
-          {% else %}
-          <button
-            class="btn btn-sm"
-            title="Funcionário já inativo"
-            disabled
-            style="
-              border: none;
-              background: none;
-              color: gray;
-              cursor: not-allowed;
-            "
-          >
-            <i class="bi bi-person-x"></i>
-          </button>
-          {% endif %}
 
           <button
             type="button"
@@ -261,39 +202,19 @@
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5
-                    class="modal-title"
-                    id="deleteModalLabel{{ employee.id }}"
-                  >
+                  <h5 class="modal-title" id="deleteModalLabel{{ employee.id }}">
                     Confirmar Exclusão
                   </h5>
-                  <button
-                    type="button"
-                    class="btn-close"
-                    data-bs-dismiss="modal"
-                    aria-label="Fechar"
-                  ></button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
-                  Tem certeza que deseja excluir o funcionário
-                  <strong>{{ employee.name|title }}</strong>?
+                  Tem certeza que deseja excluir o funcionário <strong>{{ employee.name|title }}</strong>?
                 </div>
                 <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal"
-                  >
-                    Cancelar
-                  </button>
-                  <form
-                    method="post"
-                    action="{% url 'employee_delete' employee.id %}"
-                  >
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <form method="post" action="{% url 'employee_delete' employee.id %}">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-danger">
-                      Excluir
-                    </button>
+                    <button type="submit" class="btn btn-danger">Excluir</button>
                   </form>
                 </div>
               </div>
@@ -348,7 +269,5 @@
       {% endif %}
     </ul>
   </nav>
-
-  {% if employees.paginator.count == 0 %} {% endif %}
 </div>
 {% endblock %}

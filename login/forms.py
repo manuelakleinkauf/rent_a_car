@@ -8,7 +8,7 @@ class UserCreateForm(UserCreationForm):
         fields = ['username', 'first_name', 'email', 'password1', 'password2']
         labels = {
             'username': 'Usuário',
-            'first_name': 'Nome',
+            'first_name': 'Nome completo',
             'email': 'E-mail',
             'password1': 'Senha',
             'password2': 'Confirmação de Senha',

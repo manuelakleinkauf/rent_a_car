@@ -40,7 +40,7 @@
                 type="text"
                 class="form-control"
                 id="vehicle_type"
-                value="{{ vehicle.vehicle_type }}"
+                value="{{ vehicle.get_vehicle_type_display }}"
                 disabled
               />
             </div>
@@ -51,7 +51,7 @@
                 type="text"
                 class="form-control"
                 id="brand"
-                value="{{ vehicle.brand }}"
+                value="{{ vehicle.get_brand_display|title }}"
                 disabled
               />
             </div>
@@ -62,7 +62,7 @@
                 type="text"
                 class="form-control"
                 id="model"
-                value="{{ vehicle.model }}"
+                value="{{ vehicle.model|title }}"
                 disabled
               />
             </div>
@@ -84,7 +84,7 @@
                 type="text"
                 class="form-control"
                 id="color"
-                value="{{ vehicle.color }}"
+                value="{{ vehicle.color|title }}"
                 disabled
               />
             </div>
@@ -106,7 +106,7 @@
                 type="text"
                 class="form-control"
                 id="status"
-                value="{{ vehicle.status }}"
+                value="{{ vehicle.get_status_display }}"
                 disabled
               />
             </div>

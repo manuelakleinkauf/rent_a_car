@@ -85,13 +85,20 @@ def client_delete(request, id):
     return redirect('client_list')
 
 @login_required
-def client_inactivate(request, id):
+def client_toggle_active(request, id):
     client = get_object_or_404(Client, id=id)
-    if client.reservations.filter(status='active').exists():
-        messages.error(
-            request, "Não é possível inativar. Cliente possui reservas ativas.")
+    if client.active:
+        # Tenta inativar
+        if client.reservations.filter(status='active').exists():
+            messages.error(
+                request, "Não é possível inativar. Cliente possui reservas ativas.")
+        else:
+            client.active = False
+            client.save()
+            messages.success(request, "Cliente inativado com sucesso.")
     else:
-        client.active = False
+        # Ativa o cliente
+        client.active = True
         client.save()
-        messages.success(request, "Cliente inativado com sucesso.")
+        messages.success(request, "Cliente ativado com sucesso.")
     return redirect('client_list')

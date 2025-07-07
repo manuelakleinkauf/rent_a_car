@@ -1,6 +1,8 @@
 from django.db import models
 from vehicles.models import Vehicle
 from django.utils import timezone
+from datetime import timedelta
+from django.core.exceptions import ValidationError
 
 STATUS_CHOICES = (
     ('in_progress', 'Em Manutenção'),
@@ -30,6 +32,14 @@ class Maintenance(models.Model):
         self.vehicle.save()
         super().save(*args, **kwargs)
 
+    def clean(self):
+        super().clean()
+        if self.expected_end_date and self.start_date:
+            max_end_date = self.start_date.date() + timedelta(days=30)
+            if self.expected_end_date > max_end_date:
+                raise ValidationError({
+                    'expected_end_date': 'A data prevista para término não pode ser maior que 30 dias após o início da manutenção.'
+                })
     @property
     def is_active(self):
         return not self.completed

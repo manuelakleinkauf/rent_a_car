@@ -8,7 +8,6 @@ POSITIONS_CHOICES = (
     ('seller', 'Vendedor')
 )
 
-
 class Employee(models.Model):
     name = models.CharField(max_length=255, verbose_name="Nome")
     cpf = models.CharField(max_length=11, unique=True, verbose_name="CPF")

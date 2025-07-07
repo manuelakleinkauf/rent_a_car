@@ -10,9 +10,19 @@
         <div class="card-body">
           <form method="post">
             {% csrf_token %}
-            <div class="form-group mb-4">
-              {{ form.as_p }}
-            </div>
+
+            {% for field in form %}
+              <div class="form-group mb-4">
+                <label for="{{ field.id_for_label }}">
+                  {{ field.label }}:
+                  {% if field.field.required %}
+                    <span class="text-danger">*</span>
+                  {% endif %}
+                </label>
+                {{ field }}
+                {{ field.errors }}
+              </div>
+            {% endfor %}
 
             <div class="d-flex justify-content-end gap-2 mt-3">
               <a href="{% url 'maintenance_list' %}" class="btn btn-outline-secondary d-flex align-items-center">
@@ -32,3 +42,4 @@
   </div>
 </div>
 {% endblock %}
+

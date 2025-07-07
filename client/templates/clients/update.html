@@ -15,18 +15,21 @@
             {% for field in form %}
               {% if field.name != 'active' %}
                 <div class="mb-3">
-                  {{ field.label_tag }}
+                  <label for="{{ field.id_for_label }}">
+                    {{ field.label }}:
+                    {% if field.name in "name cpf email phone" %}
+                      <span class="text-danger">*</span>
+                    {% endif %}
+                  </label>
                   {{ field }}
                   {{ field.errors }}
                 </div>
               {% endif %}
             {% endfor %}
-
-            {# Campo active como switch #}
-            <div class="form-check form-switch mb-3">
-              {{ form.active.label_tag }}
-              {{ form.active }}
-              {{ form.active.errors }}
+            
+             <div style="display: flex; gap: 10px;">
+            <div></div>
+            <div></div>
             </div>
 
             <div class="d-flex justify-content-end gap-2 mt-4">
@@ -87,4 +90,3 @@ textarea {
 }
 </style>
 {% endblock %}
-

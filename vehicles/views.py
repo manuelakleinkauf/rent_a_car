@@ -8,7 +8,6 @@ from django.core.paginator import Paginator
 from django.db.models import Q
 from django.db.models import ProtectedError
 from django.contrib.auth.decorators import login_required
-# Create your views here.
 
 @login_required
 def create_vehicle(request):

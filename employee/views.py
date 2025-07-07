@@ -84,13 +84,16 @@ def employee_delete(request, id):
     return redirect('employee_list')
 
 @login_required
-def employee_inactivate(request, id):
+def employee_toggle_active(request, id):
     employee = get_object_or_404(Employee, id=id)
     if employee.reservations.filter(status='active').exists():
         messages.error(
-            request, "Não é possível inativar. Funcionário possui reservas ativas.")
+            request, "Não é possível alterar o status. Funcionário possui reservas ativas.")
     else:
-        employee.active = False
+        employee.active = not employee.active  # Toggle
         employee.save()
-        messages.success(request, "Funcionário inativado com sucesso.")
+        status = "ativado" if employee.active else "inativado"
+        messages.success(request, f"Funcionário {status} com sucesso.")
     return redirect('employee_list')
+
+
