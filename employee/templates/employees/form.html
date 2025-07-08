@@ -1,5 +1,4 @@
-{% extends "base/base.html" %}
-{% block content %}
+{% extends "base/base.html" %} {% block content %}
 <div class="container mt-5">
   <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
@@ -16,8 +15,7 @@
                 Nome:
                 <span class="text-danger">*</span>
               </label>
-              {{ form.name }}
-              {{ form.name.errors }}
+              {{ form.name }} {{ form.name.errors }}
             </div>
 
             <div class="mb-3">
@@ -25,8 +23,7 @@
                 CPF:
                 <span class="text-danger">*</span>
               </label>
-              {{ form.cpf }}
-              {{ form.cpf.errors }}
+              {{ form.cpf }} {{ form.cpf.errors }}
             </div>
 
             <div class="mb-3">
@@ -34,8 +31,7 @@
                 Telefone:
                 <span class="text-danger">*</span>
               </label>
-              {{ form.phone }}
-              {{ form.phone.errors }}
+              {{ form.phone }} {{ form.phone.errors }}
             </div>
 
             <div class="mb-3">
@@ -43,16 +39,12 @@
                 Email:
                 <span class="text-danger">*</span>
               </label>
-              {{ form.email }}
-              {{ form.email.errors }}
+              {{ form.email }} {{ form.email.errors }}
             </div>
 
             <div class="mb-3">
-              <label for="{{ form.address.id_for_label }}">
-                Endereço:
-              </label>
-              {{ form.address }}
-              {{ form.address.errors }}
+              <label for="{{ form.address.id_for_label }}"> Endereço: </label>
+              {{ form.address }} {{ form.address.errors }}
             </div>
 
             <div class="mb-3">
@@ -60,28 +52,34 @@
                 Cargo:
                 <span class="text-danger">*</span>
               </label>
-              {{ form.position }}
-              {{ form.position.errors }}
+              {{ form.position }} {{ form.position.errors }}
             </div>
 
-            <div style="display: flex; gap: 10px;">
-            <div></div>
-            <div></div>
+            <div style="display: flex; gap: 10px">
+              <div></div>
+              <div></div>
             </div>
-              
 
             <div class="d-flex justify-content-end gap-2 mt-3">
-              <a href="{% url 'employee_list' %}" class="btn btn-outline-secondary d-flex align-items-center">
+              <a
+                href="{% url 'employee_list' %}"
+                class="btn btn-outline-secondary d-flex align-items-center"
+              >
                 <i class="bi bi-arrow-left me-2"></i> Voltar
               </a>
-              <button type="reset" class="btn btn-secondary d-flex align-items-center">
+              <button
+                type="reset"
+                class="btn btn-secondary d-flex align-items-center"
+              >
                 <i class="bi bi-x-circle me-2"></i> Limpar
               </button>
-              <button type="submit" class="btn btn-primary d-flex align-items-center">
+              <button
+                type="submit"
+                class="btn btn-primary d-flex align-items-center"
+              >
                 <i class="bi bi-check-circle me-2"></i> Cadastrar
               </button>
             </div>
-
           </form>
         </div>
       </div>
@@ -90,7 +88,9 @@
 </div>
 
 <style>
-  input, textarea, select {
+  input,
+  textarea,
+  select {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid #d1d5db;
@@ -101,15 +101,17 @@
     transition: border-color 0.3s ease;
   }
 
-  input:focus, textarea:focus, select:focus {
+  input:focus,
+  textarea:focus,
+  select:focus {
     border-color: #3b82f6;
     outline: none;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
   }
 
   textarea {
-    height: 38px;       
-    resize: none;      
+    height: 38px;
+    resize: none;
     padding: 8px 12px;
     border: 1px solid #d1d5db;
     border-radius: 8px;
