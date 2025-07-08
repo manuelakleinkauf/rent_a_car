@@ -10,6 +10,12 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def create_maintenance(request):
     if request.method == 'POST':
+        print(request)
+        expected_end_date = request.POST.get('expected_end_date')
+        end_date = timezone.datetime.strptime(expected_end_date, '%Y-%m-%d').date()
+        if end_date < timezone.now().date():
+            messages.error(request, "A data de término não pode ser anterior à data atual.")
+            return redirect('create_maintenance')
         form = MaintenanceForm(request.POST)
         if form.is_valid():
             maintenance = form.save(commit=False)

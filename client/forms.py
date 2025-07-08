@@ -47,8 +47,10 @@ class ClientForm(forms.ModelForm):
             # Verifica se o cliente tem reservas ativas
             has_active_reservations = Reservation.objects.filter(client=self.instance).exists()
             # Ou se o cliente tem algum veículo alugado (ajuste conforme seu modelo)
-            has_rented_vehicles = Vehicle.objects.filter(client=self.instance, status='rented').exists()
-
+            has_rented_vehicles = Vehicle.objects.filter(
+                reservation__client=self.instance,
+                status='rented'
+            ).exists()
             if has_active_reservations or has_rented_vehicles:
                 raise ValidationError("Cliente não pode ser inativado pois possui reservas ou veículos alugados.")
 
