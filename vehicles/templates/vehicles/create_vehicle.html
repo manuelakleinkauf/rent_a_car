@@ -42,17 +42,5 @@
   </div>
 </div>
 
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-    const selectStatus = document.querySelector('select[name="status"]');
-    if (selectStatus) {
-      for (let option of selectStatus.options) {
-        if (option.value === 'maintenance') {
-          option.disabled = true;
-          option.style.color = 'gray'; // opcional para ficar cinza
-        }
-      }
-    }
-  });
-</script>
+
 {% endblock %}
