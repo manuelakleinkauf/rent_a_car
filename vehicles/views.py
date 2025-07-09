@@ -118,6 +118,7 @@ def update_vehicle(request, vehicle_id):
         form = VehicleForm(request.POST, instance=vehicle, files=request.FILES)
         if form.is_valid():
             form.save()
+            messages.success(request, 'Veículo atualizado com sucesso!')
             return redirect('list_vehicles')
     else:
         form = VehicleForm(instance=vehicle)
