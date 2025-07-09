@@ -5,24 +5,23 @@
     <h3 class="mb-0 me-3 text-primary">Manutenções</h3>
 
     <div class="d-flex ms-auto align-items-center gap-2">
-     <form method="get" class="d-flex" style="min-width: 320px; max-width: 400px" action="">
-  <div class="position-relative w-100 me-2">
-    <input
-      class="form-control ps-5 rounded-pill"
-      type="search"
-      name="q"
-      value="{{ request.GET.q|default:'' }}"
-      placeholder="Placa ou status"
-      aria-label="Buscar"
-      style="min-width: 250px"
-    />
-    <span class="position-absolute top-50 start-0 translate-middle-y ps-3">
-      <i class="bi bi-search text-muted"></i>
-    </span>
-  </div>
-  <button class="btn btn-outline-primary" type="submit">Buscar</button>
-</form>
-
+      <form method="get" class="d-flex" style="min-width: 320px; max-width: 400px" action="">
+        <div class="position-relative w-100 me-2">
+          <input
+            class="form-control ps-5 rounded-pill"
+            type="search"
+            name="q"
+            value="{{ request.GET.q|default:'' }}"
+            placeholder="Placa"
+            aria-label="Buscar"
+            style="min-width: 250px"
+          />
+          <span class="position-absolute top-50 start-0 translate-middle-y ps-3">
+            <i class="bi bi-search text-muted"></i>
+          </span>
+        </div>
+        <button class="btn btn-outline-primary" type="submit">Buscar</button>
+      </form>
 
       {% if request.GET.q %}
       <a href="{% url 'maintenance_list' %}" class="btn btn-outline-secondary">Limpar</a>
@@ -34,9 +33,17 @@
 
   {% if messages %}
     {% for message in messages %}
-      <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+      <div
+        class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show"
+        role="alert"
+      >
         {{ message }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Fechar"></button>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="alert"
+          aria-label="Fechar"
+        ></button>
       </div>
     {% endfor %}
   {% endif %}
@@ -111,25 +118,80 @@
           <a href="{% url 'maintenance_update' maintenance.id %}" class="btn btn-sm" title="Editar">
             <i class="bi bi-pencil-square text-primary"></i>
           </a>
+
           {% if not maintenance.completed %}
-          <a href="{% url 'maintenance_complete' maintenance.id %}" class="btn btn-sm" title="Finalizar"
-             onclick="return confirm('Tem certeza que deseja concluir esta manutenção?');">
-            <i class="bi bi-check-circle text-success"></i>
-          </a>
+          <!-- Botão para concluir -->
+          <button
+            type="button"
+            data-bs-toggle="modal"
+            data-bs-target="#completeModal{{ maintenance.id }}"
+            class="btn btn-sm"
+            title="Finalizar Manutenção"
+            style="border: none; background: none; color: green;"
+          >
+            <i class="bi bi-check-circle"></i>
+          </button>
           {% else %}
           <button class="btn btn-sm" disabled style="border:none; background:none; color:gray; cursor:not-allowed;" title="Manutenção concluída">
             <i class="bi bi-check-circle-fill text-success"></i>
           </button>
           {% endif %}
-          <button type="button" class="btn btn-sm" data-bs-toggle="modal" data-bs-target="#deleteModal{{ maintenance.id }}" title="Excluir">
-            <i class="bi bi-trash text-danger"></i>
-          </button>
 
-          <div class="modal fade" id="deleteModal{{ maintenance.id }}" tabindex="-1" aria-labelledby="deleteModalLabel{{ maintenance.id }}" aria-hidden="true">
+          <!-- Modal para concluir manutenção -->
+          <div
+            class="modal fade"
+            id="completeModal{{ maintenance.id }}"
+            tabindex="-1"
+            aria-labelledby="completeModalLabel{{ maintenance.id }}"
+            aria-hidden="true"
+          >
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
-                  <h5 class="modal-title" id="deleteModalLabel{{ maintenance.id }}">Confirmar Exclusão</h5>
+                  <h5 class="modal-title" id="completeModalLabel{{ maintenance.id }}">
+                    Confirmar Conclusão
+                  </h5>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                </div>
+                <div class="modal-body">
+                  Tem certeza que deseja concluir a manutenção do veículo <strong>{{ maintenance.vehicle.plate }}</strong>?
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <form method="post" action="{% url 'maintenance_complete' maintenance.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-success">Concluir</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Botão para excluir -->
+          <button
+            type="button"
+            class="btn btn-sm"
+            data-bs-toggle="modal"
+            data-bs-target="#deleteModal{{ maintenance.id }}"
+            title="Excluir"
+          >
+            <i class="bi bi-trash text-danger"></i>
+          </button>
+
+          <!-- Modal para exclusão -->
+          <div
+            class="modal fade"
+            id="deleteModal{{ maintenance.id }}"
+            tabindex="-1"
+            aria-labelledby="deleteModalLabel{{ maintenance.id }}"
+            aria-hidden="true"
+          >
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="deleteModalLabel{{ maintenance.id }}">
+                    Confirmar Exclusão
+                  </h5>
                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
                 </div>
                 <div class="modal-body">
@@ -145,7 +207,6 @@
               </div>
             </div>
           </div>
-
         </td>
       </tr>
       {% empty %}
@@ -183,8 +244,5 @@
       {% endif %}
     </ul>
   </nav>
-
-  {% if maintenances.paginator.count == 0 %}
-  {% endif %}
 </div>
 {% endblock %}

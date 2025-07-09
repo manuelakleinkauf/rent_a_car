@@ -1,5 +1,6 @@
 from django import forms
 from .models import Reservation
+from vehicles.models import Vehicle
 
 class ReservationForm(forms.ModelForm):
     class Meta:
@@ -26,8 +27,12 @@ class ReservationForm(forms.ModelForm):
             'status': forms.Select(attrs={'class': 'form-control no-arrow'}),
         }
 
+
     def __init__(self, *args, **kwargs):
         super(ReservationForm, self).__init__(*args, **kwargs)
+
+        self.fields['vehicle'].queryset = Vehicle.objects.exclude(status='maintenance') 
+        
         for field in ['start_date', 'end_date']:
             if self.instance and getattr(self.instance, field):
                 self.fields[field].initial = getattr(self.instance, field).strftime('%Y-%m-%d')
@@ -49,3 +54,4 @@ class ReturnForm(forms.Form):
         widget=forms.Textarea,
         required=False
     )
+
